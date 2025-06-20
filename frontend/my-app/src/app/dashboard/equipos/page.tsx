@@ -1,0 +1,381 @@
+"use client";
+import { useEffect, useState, useCallback } from "react";
+import withAuth from "@/hoc/withAuth";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  Tag,
+  message,
+  Space,
+} from "antd";
+import { PlusOutlined, FolderAddOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
+
+interface Grupo {
+  id: string;
+  name: string;
+}
+
+interface Equipo {
+  id: string;
+  name: string;
+  type: string;
+  location: string;
+  acquiredAt?: string;
+  status: "ACTIVE" | "MAINTENANCE" | "OUT_OF_SERVICE";
+  groupId?: string;
+  group?: Grupo;
+}
+
+const estadoColor = {
+  ACTIVE: "green",
+  MAINTENANCE: "gold",
+  OUT_OF_SERVICE: "red",
+};
+
+const EquiposTable = () => {
+  const router = useRouter();
+
+  const [equipos, setEquipos] = useState<Equipo[]>([]);
+  const [grupos, setGrupos] = useState<Grupo[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [editingEquipo, setEditingEquipo] = useState<Equipo | null>(null);
+  const [form] = Form.useForm();
+  const [groupForm] = Form.useForm();
+  const [searchText, setSearchText] = useState("");
+  const [selectedGroupId, setSelectedGroupId] = useState<string | undefined>(
+    undefined
+  );
+  const [selectedEstado, setSelectedEstado] = useState<string | undefined>(
+    undefined
+  );
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  const fetchEquipos = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:3000/api/equipos", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setEquipos(data);
+    } catch {
+      message.error("Error al cargar los equipos.");
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  // const fetchGrupos = useCallback(async () => {
+  //   try {
+  //     const res = await fetch("http://localhost:3000/api/grupos", {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     const data = await res.json();
+  //     setGrupos(data);
+  //   } catch {
+  //     message.error("Error al cargar los grupos.");
+  //   }
+  // }, [token]);
+
+  const fetchGrupos = useCallback(async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/grupos", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        // Si viene 401 o cualquier otro estatus ≠ 2xx, ZANJAMOS y forzamos array vacío
+        message.error("No autorizado al obtener grupos");
+        setGrupos([]);
+        return;
+      }
+      const data = await res.json();
+      // Garantizamos que data sea un array (por si acaso viene algo raro)
+      setGrupos(Array.isArray(data) ? data : []);
+    } catch (err: unknown) {
+      console.error("Error al cargar los grupos:", err);
+      message.error("Error al cargar los grupos.");
+      setGrupos([]);
+    }
+  }, [token]);
+
+  const handleCreateOrUpdate = async (values: {
+    name: string;
+    type: string;
+    location: string;
+    acquiredAt?: Date | null;
+    status: "ACTIVE" | "MAINTENANCE" | "OUT_OF_SERVICE";
+    groupId?: string | null;
+  }) => {
+    console.log("Valores enviados al backend:", values);
+
+    const isEditing = !!editingEquipo;
+    const url = isEditing
+      ? `http://localhost:3000/api/equipos/${editingEquipo.id}`
+      : "http://localhost:3000/api/equipos";
+    const method = isEditing ? "PUT" : "POST";
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: values.name,
+          type: values.type,
+          location: values.location,
+          acquiredAt: values.acquiredAt
+            ? values.acquiredAt.toISOString()
+            : null,
+          status: values.status,
+          groupId: values.groupId || null,
+        }),
+      });
+
+      if (!res.ok) throw new Error();
+      message.success(isEditing ? "Equipo actualizado" : "Equipo creado");
+      setIsModalOpen(false);
+      form.resetFields();
+      setEditingEquipo(null);
+      fetchEquipos();
+    } catch {
+      message.error("Hubo un error al guardar");
+    }
+  };
+
+  const handleCreateGroup = async () => {
+    try {
+      const values = await groupForm.validateFields();
+      const res = await fetch("http://localhost:3000/api/grupos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) throw new Error();
+
+      message.success("Grupo creado");
+      setIsGroupModalOpen(false);
+      groupForm.resetFields();
+      fetchGrupos();
+    } catch {
+      message.error("No se pudo crear el grupo");
+    }
+  };
+
+  useEffect(() => {
+    fetchEquipos();
+    fetchGrupos();
+  }, [fetchEquipos, fetchGrupos]);
+
+  const filteredEquipos = equipos.filter((equipo) => {
+    const search = searchText.toLowerCase();
+    const matchesSearch =
+      equipo.name.toLowerCase().includes(search) ||
+      equipo.type.toLowerCase().includes(search) ||
+      equipo.location.toLowerCase().includes(search);
+    const matchesGroup = selectedGroupId
+      ? equipo.groupId === selectedGroupId
+      : true;
+    const matchesEstado = selectedEstado
+      ? equipo.status === selectedEstado
+      : true;
+    return matchesSearch && matchesGroup && matchesEstado;
+  });
+
+  return (
+    <>
+      <div className="flex flex-wrap gap-4">
+        <div
+          style={{
+            marginBottom: 16,
+            display: "flex",
+            gap: 16,
+            flexWrap: "wrap",
+          }}
+        >
+          <Input
+            placeholder="Buscar equipo"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ width: 200 }}
+          />
+          <Select
+            allowClear
+            placeholder="Filtrar por grupo"
+            value={selectedGroupId}
+            onChange={(value) => setSelectedGroupId(value)}
+            style={{ width: 200 }}
+          >
+            {grupos.map((grupo) => (
+              <Select.Option key={grupo.id} value={grupo.id}>
+                {grupo.name}
+              </Select.Option>
+            ))}
+          </Select>
+          <Select
+            allowClear
+            placeholder="Filtrar por estado"
+            value={selectedEstado}
+            onChange={(value) => setSelectedEstado(value)}
+            style={{ width: 200 }}
+          >
+            <Select.Option value="ACTIVO">Activo</Select.Option>
+            <Select.Option value="MAINTENANCE">En mantenimiento</Select.Option>
+            <Select.Option value="OUT_OF_SERVICE">
+              Fuera de servicio
+            </Select.Option>
+          </Select>
+          <Space>
+            <Button
+              icon={<PlusOutlined />}
+              type="primary"
+              onClick={() => {
+                form.resetFields();
+                setEditingEquipo(null);
+                setIsModalOpen(true);
+              }}
+            >
+              Nuevo equipo
+            </Button>
+            <Button
+              icon={<FolderAddOutlined />}
+              onClick={() => setIsGroupModalOpen(true)}
+            >
+              Crear grupo
+            </Button>
+          </Space>
+        </div>
+      </div>
+
+      <Table
+        rowKey="id"
+        dataSource={filteredEquipos}
+        scroll={{ x: "max-content" }}
+        loading={loading}
+        columns={[
+          { title: "Nombre", dataIndex: "name" },
+          { title: "Tipo", dataIndex: "type" },
+          { title: "Ubicación", dataIndex: "location" },
+          {
+            title: "Fecha de adquisición",
+            dataIndex: "acquiredAt",
+            render: (fecha: string) =>
+              fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
+          },
+          {
+            title: "Estado",
+            dataIndex: "status",
+            render: (estado: string) => (
+              <Tag color={estadoColor[estado as keyof typeof estadoColor]}>
+                {estado.replace("_", " ")}
+              </Tag>
+            ),
+          },
+          {
+            title: "Grupo",
+            dataIndex: ["group", "name"],
+            render: (grupo: string) => grupo || "-",
+          },
+        ]}
+        onRow={(record) => ({
+          onClick: () => {
+            router.push(`/dashboard/equipos/${record.id}`);
+          },
+          className: "cursor-pointer hover:bg-gray-100 transition",
+        })}
+      />
+
+      <Modal
+        title={editingEquipo ? "Editar equipo" : "Nuevo equipo"}
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setEditingEquipo(null);
+          form.resetFields();
+        }}
+        onOk={() => form.submit()}
+        okText={editingEquipo ? "Guardar cambios" : "Crear"}
+      >
+        <Form
+          layout="vertical"
+          form={form}
+          onFinish={handleCreateOrUpdate}
+          initialValues={{ status: "ACTIVO" }}
+        >
+          <Form.Item label="Nombre" name="name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Tipo" name="type" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Ubicación"
+            name="location"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item label="Fecha de adquisición" name="acquiredAt">
+            <DatePicker style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item label="Estado" name="status" rules={[{ required: true }]}>
+            <Select
+              options={[
+                { label: "Activo", value: "ACTIVE" },
+                { label: "En mantenimiento", value: "MAINTENANCE" },
+                { label: "Fuera de servicio", value: "OUT_OF_SERVICE" },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item label="Grupo" name="groupId">
+            <Select allowClear placeholder="Seleccionar grupo (opcional)">
+              {grupos.map((grupo) => (
+                <Select.Option key={grupo.id} value={grupo.id}>
+                  {grupo.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="Crear nuevo grupo"
+        open={isGroupModalOpen}
+        onCancel={() => {
+          setIsGroupModalOpen(false);
+          groupForm.resetFields();
+        }}
+        onOk={() => groupForm.submit()}
+        okText="Crear"
+      >
+        <Form layout="vertical" form={groupForm} onFinish={handleCreateGroup}>
+          <Form.Item
+            name="name"
+            label="Nombre del grupo"
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="Ej. Fábrica de helados" />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  );
+};
+
+export default withAuth(EquiposTable);
