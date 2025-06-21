@@ -20,8 +20,14 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Middlewares generales
-app.use(cors());
 app.use(express.json());
+
+app.use(cors({
+  origin: "https://dashboard-full-5gu3-4sy8i5hko-ricardoc2903s-projects.vercel.app", // o "*", solo para desarrollo
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true
+}));
+
 
 // Middleware para recibir archivos en req.files
 app.use(
