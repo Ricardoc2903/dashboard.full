@@ -39,8 +39,7 @@ const AuthPage = () => {
     email: string;
     password: string;
   };
-
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
 
   const handleSubmit = async (values: AuthFormValues) => {
     try {
