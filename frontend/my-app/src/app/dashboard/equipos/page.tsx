@@ -39,6 +39,9 @@ const estadoColor = {
   OUT_OF_SERVICE: "red",
 };
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
 const EquiposTable = () => {
   const router = useRouter();
 
@@ -63,7 +66,7 @@ const EquiposTable = () => {
   const fetchEquipos = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/api/equipos", {
+      const res = await fetch(`${API_BASE}/api/equipos`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -75,21 +78,9 @@ const EquiposTable = () => {
     }
   }, [token]);
 
-  // const fetchGrupos = useCallback(async () => {
-  //   try {
-  //     const res = await fetch("http://localhost:3000/api/grupos", {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     const data = await res.json();
-  //     setGrupos(data);
-  //   } catch {
-  //     message.error("Error al cargar los grupos.");
-  //   }
-  // }, [token]);
-
   const fetchGrupos = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/grupos", {
+      const res = await fetch(`${API_BASE}/api/grupos`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
@@ -120,8 +111,8 @@ const EquiposTable = () => {
 
     const isEditing = !!editingEquipo;
     const url = isEditing
-      ? `http://localhost:3000/api/equipos/${editingEquipo.id}`
-      : "http://localhost:3000/api/equipos";
+      ? `${API_BASE}/api/equipos/${editingEquipo.id}`
+      : `${API_BASE}/api/equipos`;
     const method = isEditing ? "PUT" : "POST";
 
     try {
@@ -157,7 +148,7 @@ const EquiposTable = () => {
   const handleCreateGroup = async () => {
     try {
       const values = await groupForm.validateFields();
-      const res = await fetch("http://localhost:3000/api/grupos", {
+      const res = await fetch(`${API_BASE }/api/grupos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

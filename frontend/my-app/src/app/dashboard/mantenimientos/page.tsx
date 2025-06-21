@@ -60,6 +60,9 @@ const getEstadoTagColor = (estado: string) => {
   }
 };
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
 const MaintenanceTable = () => {
   const [data, setData] = useState<Mantenimiento[]>([]);
   const [equipos, setEquipos] = useState<Equipo[]>([]);
@@ -87,7 +90,7 @@ const MaintenanceTable = () => {
 
   const fetchEquipos = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/equipos", {
+      const response = await axios.get(`${API_BASE}/api/equipos`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEquipos(response.data);
@@ -100,7 +103,7 @@ const MaintenanceTable = () => {
   const fetchMantenimientos = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/mantenimientos",
+        `${API_BASE}/api/mantenimientos`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -124,7 +127,7 @@ const MaintenanceTable = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:3000/api/mantenimientos/${id}`, {
+      await axios.delete(`${API_BASE}/api/mantenimientos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchMantenimientos();
@@ -151,7 +154,7 @@ const MaintenanceTable = () => {
     try {
       const values = await editForm.validateFields();
       await axios.put(
-        `http://localhost:3000/api/mantenimientos/${editingRecord?.id}`,
+        `${API_BASE}/api/mantenimientos/${editingRecord?.id}`,
         {
           name: values.nombre,
           date: values.fecha,
@@ -175,7 +178,7 @@ const MaintenanceTable = () => {
     try {
       const values = await form.validateFields();
       await axios.post(
-        "http://localhost:3000/api/mantenimientos",
+        `${API_BASE}/api/mantenimientos`,
         {
           name: values.nombre,
           date: values.fecha,

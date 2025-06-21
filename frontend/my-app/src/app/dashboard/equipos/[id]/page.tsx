@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
@@ -52,6 +52,9 @@ const estadoColor: Record<string, string> = {
   OUT_OF_SERVICE: "red",
 };
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+
 function EquipoDetalle() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -67,7 +70,7 @@ function EquipoDetalle() {
 
   const fetchEquipo = useCallback(async () => {
     try {
-      const res = await axios.get(`http://localhost:3000/api/equipos/${id}`, {
+      const res = await axios.get( `${API_BASE}/api/equipos/${id}` , {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEquipo(res.data);
@@ -89,7 +92,7 @@ function EquipoDetalle() {
   const fetchMantenimientos = useCallback(async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/mantenimientos/by-equipo/${id}`,
+        `${API_BASE}/api/mantenimientos/by-equipo/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -102,7 +105,7 @@ function EquipoDetalle() {
 
   const fetchGrupos = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/grupos", {
+      const res = await axios.get(`${API_BASE}/api/grupos`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setGrupos(res.data);
@@ -113,7 +116,7 @@ function EquipoDetalle() {
 
   const handleSubmitEditar = async (values: EquipoFormValues) => {
     try {
-      await axios.put(`http://localhost:3000/api/equipos/${id}`, values, {
+      await axios.put(`${API_BASE}/api/equipos/${id}`, values, {
         headers: { Authorization: `Bearer ${token}` },
       });
       message.success("Equipo actualizado");

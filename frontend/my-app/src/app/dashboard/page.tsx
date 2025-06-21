@@ -15,6 +15,8 @@ import {
 } from "chart.js";
 import { useAuth } from "@/context/AuthContext"; // ✅ IMPORTANTE
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -46,13 +48,13 @@ export default function DashboardInicio() {
     const fetchStats = async () => {
       try {
         const [resM, resE, resG] = await Promise.all([
-          fetch("http://localhost:3000/api/stats/total-mantenimientos", {
+          fetch(`${API_BASE}/api/stats/total-mantenimientos`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:3000/api/stats/total-equipos", {
+          fetch(`${API_BASE}/api/stats/total-equipos`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:3000/api/stats/estado-mantenimientos", {
+          fetch(`${API_BASE}/api/stats/estado-mantenimientos`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);

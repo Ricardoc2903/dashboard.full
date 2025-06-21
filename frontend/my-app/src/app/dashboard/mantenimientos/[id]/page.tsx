@@ -28,8 +28,7 @@ interface Mantenimiento {
   archivos?: Archivo[];
 }
 
-// Ajusta si tu backend corre en otro host/puerto
-const BACKEND = "http://localhost:3000";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const MantenimientoDetalle = () => {
   const { id } = useParams();
@@ -46,7 +45,7 @@ const MantenimientoDetalle = () => {
     setLoading(true);
     try {
       const { data } = await axios.get<Mantenimiento>(
-        `${BACKEND}/api/mantenimientos/${id}`,
+        `${API_BASE}/api/mantenimientos/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setMantenimiento(data);

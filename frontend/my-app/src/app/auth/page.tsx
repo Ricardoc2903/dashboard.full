@@ -40,52 +40,53 @@ const AuthPage = () => {
     password: string;
   };
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   const handleSubmit = async (values: AuthFormValues) => {
-  try {
-    const endpoint = isLogin
-      ? "http://localhost:3000/api/auth/login"
-      : "http://localhost:3000/api/auth/register";
+    try {
+      const endpoint = isLogin
+        ? `${API_BASE}/api/auth/login`
+        : `${API_BASE}/api/auth/register`;
 
-    const { data } = await axios.post(endpoint, values);
-    login(data.token, data.user);
-  } catch (error: unknown) {
-    console.error("Error en la autenticación", error);
+      const { data } = await axios.post(endpoint, values);
+      login(data.token, data.user);
+    } catch (error: unknown) {
+      console.error("Error en la autenticación", error);
 
-    if (axios.isAxiosError(error) && error.response) {
-      const status = error.response.status as number;
-      const respData = error.response.data as AuthErrorResponse;
+      if (axios.isAxiosError(error) && error.response) {
+        const status = error.response.status as number;
+        const respData = error.response.data as AuthErrorResponse;
 
-      // ——— Manejo LOGIN: si es 400, mostramos siempre el mensaje genérico ———
-      if (isLogin && status === 400) {
-        message.error("Usuario o contraseña incorrectos");
-        return;
-      }
-
-      // ——— Manejo REGISTER: validaciones específicas ———
-      if (!isLogin) {
-        const missingFields = respData.missingFields;
-        const reason = respData.reason;
-
-        if (status === 400 && Array.isArray(missingFields)) {
-          message.error(
-            `Faltan campos obligatorios: ${missingFields.join(", ")}.`
-          );
+        // ——— Manejo LOGIN: si es 400, mostramos siempre el mensaje genérico ———
+        if (isLogin && status === 400) {
+          message.error("Usuario o contraseña incorrectos");
           return;
         }
-        if (status === 400 && reason === "email_taken") {
-          message.error("Ese correo ya está registrado.");
+
+        // ——— Manejo REGISTER: validaciones específicas ———
+        if (!isLogin) {
+          const missingFields = respData.missingFields;
+          const reason = respData.reason;
+
+          if (status === 400 && Array.isArray(missingFields)) {
+            message.error(
+              `Faltan campos obligatorios: ${missingFields.join(", ")}.`
+            );
+            return;
+          }
+          if (status === 400 && reason === "email_taken") {
+            message.error("Ese correo ya está registrado.");
+            return;
+          }
+          message.error(respData.message || "Error al registrar la cuenta.");
           return;
         }
-        message.error(respData.message || "Error al registrar la cuenta.");
-        return;
       }
+
+      // Cualquier otro caso (network, 500, etc.)
+      message.error("Error inesperado de red o de servidor.");
     }
-
-    // Cualquier otro caso (network, 500, etc.)
-    message.error("Error inesperado de red o de servidor.");
-  }
-};
-
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-blue-950 to-black relative">
