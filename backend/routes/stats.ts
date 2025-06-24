@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, MaintenanceStatus } from "@prisma/client";
 import authenticateJWT from "../middleware/authenticateJWT";
 import dayjs from "dayjs";
 
@@ -37,7 +37,7 @@ router.get("/estado-mantenimientos", async (_req: Request, res: Response) => {
       _count: { status: true },
     });
 
-    const result = grouped.map((g) => ({
+    const result = grouped.map((g: { status: MaintenanceStatus; _count: { status: number } }) => ({
       status: g.status,
       count: g._count.status,
     }));
@@ -67,9 +67,11 @@ router.get("/mantenimientos-por-mes", async (_req: Request, res: Response) => {
     const resultado = Array.from({ length: 6 }).map((_, i) => {
       const fecha = inicio.add(i, "month");
       const mes = fecha.format("MMMM");
-      const cantidad = mantenimientos.filter((m) =>
+
+      const cantidad = mantenimientos.filter((m: { date: Date }) =>
         dayjs(m.date).isSame(fecha, "month")
       ).length;
+
       return { mes, cantidad };
     });
 

@@ -1,11 +1,10 @@
-
-
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import * as mime from "mime-types";
 import authenticateJWT, { AuthenticatedRequest } from "../middleware/authenticateJWT";
 import cloudinary from "../utils/cloudinary";
 import fileUpload from "express-fileupload";
+import { Express } from "express";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -90,11 +89,13 @@ router.get(
         res.status(404).json({ message: "Mantenimiento no encontrado" });
         return;
       }
-      const archivos = m.files.map((f) => ({
+
+      const archivos = m.files.map((f: { id: string, filename: string, url: string }) => ({
         id: f.id,
         filename: f.filename,
         url: `${req.protocol}://${req.get("host")}${f.url}`,
       }));
+
       res.status(200).json({ ...m, archivos });
     } catch (error) {
       console.error("Error al obtener mantenimiento:", error);
@@ -116,7 +117,9 @@ router.post(
         res.status(401).json({ message: "No autorizado" });
         return;
       }
+
       const { name, date, equipmentId, status, notes } = req.body;
+
       const nuevo = await prisma.maintenance.create({
         data: {
           name,
@@ -127,6 +130,7 @@ router.post(
           userId: req.user.id,
         },
       });
+
       res.status(201).json(nuevo);
     } catch (error) {
       console.error("Error al crear mantenimiento:", error);
@@ -145,6 +149,7 @@ router.put(
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { name, date, equipmentId, status, notes } = req.body;
+
       const actualizado = await prisma.maintenance.update({
         where: { id: req.params.id },
         data: {
@@ -155,6 +160,7 @@ router.put(
           notes,
         },
       });
+
       res.status(200).json(actualizado);
     } catch (error) {
       console.error("Error al actualizar mantenimiento:", error);
