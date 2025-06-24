@@ -1,1 +1,66 @@
-Z
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model ChangeLog {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model Equipment {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  acquiredAt DateTime  @db.Date
+  createdAt  DateTime  @db.Date
+  groupId    String?   @db.ObjectId
+  location   String
+  name       String
+  status     String
+  type       String
+  updatedAt  DateTime? @db.Date
+  userId     String    @db.ObjectId
+}
+
+model EquipmentGroup {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  userId String @db.ObjectId
+}
+
+model EquipmentTag {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model File {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model Maintenance {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime @db.Date
+  date        DateTime @db.Date
+  equipmentId String   @db.ObjectId
+  name        String
+  notes       String
+  status      String
+  userId      String   @db.ObjectId
+}
+
+model MaintenanceTag {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model Tag {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  /// Field referred in an index, but found no data to define the type.
+  name Json?  @unique
+}
+
+model User {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime  @db.Date
+  email     String    @unique
+  name      String
+  password  String
+  role      String
+  updatedAt DateTime? @db.Date
+}
