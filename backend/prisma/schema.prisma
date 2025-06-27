@@ -1,66 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
-model ChangeLog {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-}
-
-model Equipment {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  acquiredAt DateTime  @db.Date
-  createdAt  DateTime  @db.Date
-  groupId    String?   @db.ObjectId
-  location   String
-  name       String
-  status     String
-  type       String
-  updatedAt  DateTime? @db.Date
-  userId     String    @db.ObjectId
-}
-
-model EquipmentGroup {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  name   String
-  userId String @db.ObjectId
-}
-
-model EquipmentTag {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-}
-
-model File {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-}
-
 model Maintenance {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt   DateTime @db.Date
-  date        DateTime @db.Date
-  equipmentId String   @db.ObjectId
-  name        String
-  notes       String
-  status      String
-  userId      String   @db.ObjectId
+  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  date             DateTime
+  notes            String?
+  status           MaintenanceStatus
+  createdAt        DateTime         @default(now())
+  equipmentId      String           @db.ObjectId
+  userId           String           @db.ObjectId
+
+  equipment        Equipment        @relation(fields: [equipmentId], references: [id])
+  user             User             @relation(fields: [userId], references: [id])
+  maintenanceTags  MaintenanceTag[]
+  files            File[]
 }
 
 model MaintenanceTag {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  maintenanceId  String       @db.ObjectId
+  tagId          String       @db.ObjectId
+
+  maintenance    Maintenance  @relation(fields: [maintenanceId], references: [id])
+  tag            Tag          @relation(fields: [tagId], references: [id])
+}
+
+model EquipmentTag {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  equipmentId  String     @db.ObjectId
+  tagId        String     @db.ObjectId
+
+  equipment    Equipment  @relation(fields: [equipmentId], references: [id])
+  tag          Tag        @relation(fields: [tagId], references: [id])
+}
+
+model File {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  url            String
+  filename       String
+  uploadedAt     DateTime      @default(now())
+  content        Bytes
+  maintenanceId  String?       @db.ObjectId
+  equipmentId    String?       @db.ObjectId
+
+  maintenance    Maintenance?  @relation(fields: [maintenanceId], references: [id])
+  equipment      Equipment?    @relation(fields: [equipmentId], references: [id], name: "EquipmentFiles")
 }
 
 model Tag {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  /// Field referred in an index, but found no data to define the type.
-  name Json?  @unique
+  id                String           @id @default(auto()) @map("_id") @db.ObjectId
+  name              String           @unique
+  color             String
+  maintenanceTags   MaintenanceTag[]
+  equipmentTags     EquipmentTag[]
+}
+
+model EquipmentGroup {
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  userId   String     @db.ObjectId
+  user     User       @relation(fields: [userId], references: [id])
+  equipos  Equipment[] @relation("GrupoEquipos")
+}
+
+model Equipment {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  type           String
+  location       String
+  acquiredAt     DateTime?
+  status         EquipmentStatus
+  createdAt      DateTime         @default(now())
+  userId         String           @db.ObjectId
+  groupId        String?          @db.ObjectId
+
+  group          EquipmentGroup?  @relation("GrupoEquipos", fields: [groupId], references: [id])
+  user           User             @relation(fields: [userId], references: [id])
+  mantenimientos Maintenance[]
+  files          File[] @relation("EquipmentFiles")
+  equipmentTags  EquipmentTag[]
 }
 
 model User {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime  @db.Date
-  email     String    @unique
-  name      String
-  password  String
-  role      String
-  updatedAt DateTime? @db.Date
+  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  email            String           @unique
+  name             String?
+  password         String
+  role             Role             @default(USER)
+  createdAt        DateTime         @default(now())
+
+  equipos          Equipment[]
+  equipmentGroups  EquipmentGroup[]
+  mantenimientos   Maintenance[]
+  changeLogs       ChangeLog[]
+}
+
+model ChangeLog {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  entity     String
+  entityId   String
+  action     String
+  changes    String
+  timestamp  DateTime  @default(now())
+  userId     String    @db.ObjectId
+
+  user       User      @relation(fields: [userId], references: [id])
+}
+
+enum EquipmentStatus {
+  ACTIVE
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+enum MaintenanceStatus {
+  COMPLETED
+  PENDING
+  IN_PROGRESS
+}
+
+enum Role {
+  USER
+  ADMIN
 }
