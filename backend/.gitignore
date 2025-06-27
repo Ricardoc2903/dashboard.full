@@ -20,3 +20,5 @@ yarn-error.log*
 # Archivos del IDE o SO
 .vscode/
 .DS_Store
+
+dist/

@@ -11,6 +11,6 @@
     "outDir": "dist",
     "baseUrl": "./"
   },
-  "include": ["prisma", ".", "routes", "middleware"],
+  "include": ["*.ts", "routes/**/*.ts", "middleware/**/*.ts", "prisma/**/*.ts"],
   "exclude": ["node_modules"]
 }
