@@ -1,10 +1,6 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import * as mime from "mime-types";
-import authenticateJWT, { AuthenticatedRequest } from "../middleware/authenticateJWT";
-import cloudinary from "../utils/cloudinary";
-import fileUpload from "express-fileupload";
-import { Express } from "express";
+import authenticateJWT, { AuthenticatedRequest } from "../middleware/authenticateJWT.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
