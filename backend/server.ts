@@ -1,16 +1,15 @@
-// src/server.ts
 import express from "express";
 import cors from "cors";
 import path from "path";
 import fileUpload from "express-fileupload";
 import { fileURLToPath } from "url";
-import authRoutes from "./routes/auth";
-import equiposRoutes from "./routes/equipos";
-import mantenimientosRoutes from "./routes/maintenances";
-import gruposRoutes from "./routes/grupos";
-import statsRoutes from "./routes/stats";
-import authenticateJWT from "./middleware/authenticateJWT";
-import authProtegidoRoutes from "./routes/authProtegido";
+import authRoutes from "./routes/auth.js";
+import equiposRoutes from "./routes/equipos.js";
+import mantenimientosRoutes from "./routes/maintenances.js";
+import gruposRoutes from "./routes/grupos.js";
+import statsRoutes from "./routes/stats.js";
+import authenticateJWT from "./middleware/authenticateJWT.js";
+import authProtegidoRoutes from "./routes/authProtegido.js";
 
 
 // Simular __dirname en ES Modules

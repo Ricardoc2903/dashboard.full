@@ -9,8 +9,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "outDir": "dist",
-    "baseUrl": "./"
+    "rootDir": "."  // 👈 Agregá esto para evitar estructura errónea
   },
   "include": ["*.ts", "routes/**/*.ts", "middleware/**/*.ts", "prisma/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }
