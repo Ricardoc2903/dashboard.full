@@ -1,7 +1,7 @@
 
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import authenticateJWT, { AuthenticatedRequest } from "../middleware/authenticateJWT";
+import authenticateJWT, { AuthenticatedRequest } from "../middleware/authenticateJWT.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();

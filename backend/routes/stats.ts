@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { PrismaClient} from "@prisma/client";
-import authenticateJWT from "../middleware/authenticateJWT";
+import authenticateJWT from "../middleware/authenticateJWT.js";
 import dayjs from "dayjs";
 
 const router = express.Router();

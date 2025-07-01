@@ -2,9 +2,8 @@
 import express, { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import authenticateJWT, { AuthenticatedRequest } from "../middleware/authenticateJWT";
+import authenticateJWT, { AuthenticatedRequest } from "../middleware/authenticateJWT.js";
 import { requireAdmin } from "../middleware/requireAdmin";
 
 dotenv.config();
