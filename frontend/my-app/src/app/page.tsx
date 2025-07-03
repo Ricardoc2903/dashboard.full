@@ -14,10 +14,10 @@ export default function HomePage() {
       <div className="max-w-4xl w-full px-8 py-12 flex flex-col md:flex-row items-center justify-between gap-10">
         {/* Texto de bienvenida */}
         <div className="flex-1">
-          <Title level={1} style={{ fontSize: "2.5rem" }}>
+          <Title level={1} style={{ fontSize: "2.5rem", color: "white"}}>
             Bienvenido a tu Sistema de Mantenimiento
           </Title>
-          <Paragraph style={{ fontSize: "1.2rem", marginTop: "1rem" }}>
+          <Paragraph style={{ fontSize: "1.2rem", marginTop: "1rem", color: "white" }}>
             Gestiona tus equipos, mantenimientos, reportes y archivos de forma simple y rápida.
           </Paragraph>
 
