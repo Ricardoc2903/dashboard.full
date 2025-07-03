@@ -22,7 +22,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: "https://vercel.com/ricardoc2903s-projects/dashboard-full-5gu3", // o "*", solo para desarrollo
+  origin: "https://dashboard-full-5gu3.vercel.app/", // o "*", solo para desarrollo
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
 }));
