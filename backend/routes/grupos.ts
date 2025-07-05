@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// GET todos los grupos (ahora sin filtro por usuario)
+// GET todos los grupos (sin filtro por usuario)
 router.get("/", async (_req: Request, res: Response): Promise<void> => {
   try {
     const grupos = await prisma.equipmentGroup.findMany({
@@ -17,7 +17,7 @@ router.get("/", async (_req: Request, res: Response): Promise<void> => {
   }
 });
 
-// POST crear grupo
+// POST crear grupo (no se asocia a un usuario)
 router.post("/", async (req: Request, res: Response): Promise<void> => {
   const { name } = req.body;
 
@@ -28,7 +28,10 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
 
   try {
     const nuevoGrupo = await prisma.equipmentGroup.create({
-      data: { name },
+      data: {
+        name,
+        user: undefined, // Se deja explícitamente sin usuario
+      },
     });
     res.status(201).json(nuevoGrupo);
   } catch (error) {
@@ -48,8 +51,7 @@ router.delete("/:id", async (req: Request, res: Response): Promise<void> => {
 
     if (equipos.length > 0) {
       res.status(400).json({
-        message:
-          "No se puede eliminar el grupo porque tiene equipos asociados.",
+        message: "No se puede eliminar el grupo porque tiene equipos asociados.",
       });
       return;
     }
