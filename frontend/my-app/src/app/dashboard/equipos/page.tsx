@@ -167,35 +167,28 @@ const EquiposTable = () => {
     }
   };
 
-  const handleDeleteGroup = (id: string) => {
-    Modal.confirm({
-      title: "¿Eliminar este grupo?",
-      content: "Esta acción no se puede deshacer.",
-      okText: "Eliminar",
-      okType: "danger",
-      cancelText: "Cancelar",
-      onOk: async () => {
-        try {
-          const res = await fetch(`${API_BASE}/api/grupos/${id}`, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
-          });
+  const handleDeleteGroup = async (groupId: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/grupos/${groupId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-          if (res.status === 400) {
-            const data = await res.json();
-            message.warning(data.message || "Este grupo no se puede eliminar.");
-            return;
-          }
-
-          if (!res.ok) throw new Error();
-
-          message.success("Grupo eliminado");
-          fetchGrupos();
-        } catch {
-          message.error("Error al eliminar grupo");
-        }
-      },
-    });
+      if (res.status === 400) {
+        const data = await res.json();
+        message.warning(data.message || "No se pudo eliminar el grupo");
+      } else if (!res.ok) {
+        throw new Error();
+      } else {
+        message.success("Grupo eliminado");
+        fetchGrupos(); // actualiza la lista de grupos
+      }
+    } catch (err) {
+      console.error("Error al eliminar grupo:", err);
+      message.error("Error al eliminar grupo");
+    }
   };
 
   useEffect(() => {
@@ -409,6 +402,25 @@ const EquiposTable = () => {
             <Input placeholder="Ej. Fábrica de helados" />
           </Form.Item>
         </Form>
+
+        <div className="mt-4">
+          <h4 style={{ marginBottom: 8 }}>Grupos existentes</h4>
+          {grupos.map((grupo) => (
+            <div
+              key={grupo.id}
+              className="flex justify-between items-center border p-2 rounded mb-2"
+            >
+              <span>{grupo.name}</span>
+              <Button
+                danger
+                size="small"
+                onClick={() => handleDeleteGroup(grupo.id)}
+              >
+                Eliminar
+              </Button>
+            </div>
+          ))}
+        </div>
       </Modal>
     </>
   );

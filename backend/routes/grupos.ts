@@ -48,7 +48,8 @@ router.delete("/:id", async (req: Request, res: Response): Promise<void> => {
 
     if (equipos.length > 0) {
       res.status(400).json({
-        message: "No se puede eliminar el grupo porque tiene equipos asociados.",
+        message:
+          "No se puede eliminar el grupo porque tiene equipos asociados.",
       });
       return;
     }
