@@ -41,7 +41,6 @@ const estadoColor = {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-
 const EquiposTable = () => {
   const router = useRouter();
 
@@ -148,7 +147,7 @@ const EquiposTable = () => {
   const handleCreateGroup = async () => {
     try {
       const values = await groupForm.validateFields();
-      const res = await fetch(`${API_BASE }/api/grupos`, {
+      const res = await fetch(`${API_BASE}/api/grupos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -166,6 +165,37 @@ const EquiposTable = () => {
     } catch {
       message.error("No se pudo crear el grupo");
     }
+  };
+
+  const handleDeleteGroup = (id: string) => {
+    Modal.confirm({
+      title: "¿Eliminar este grupo?",
+      content: "Esta acción no se puede deshacer.",
+      okText: "Eliminar",
+      okType: "danger",
+      cancelText: "Cancelar",
+      onOk: async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/grupos/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (res.status === 400) {
+            const data = await res.json();
+            message.warning(data.message || "Este grupo no se puede eliminar.");
+            return;
+          }
+
+          if (!res.ok) throw new Error();
+
+          message.success("Grupo eliminado");
+          fetchGrupos();
+        } catch {
+          message.error("Error al eliminar grupo");
+        }
+      },
+    });
   };
 
   useEffect(() => {
@@ -216,6 +246,21 @@ const EquiposTable = () => {
               <Select.Option key={grupo.id} value={grupo.id}>
                 {grupo.name}
               </Select.Option>
+            ))}
+            {grupos.map((grupo) => (
+              <div
+                key={grupo.id}
+                className="flex justify-between items-center mb-2"
+              >
+                <span>{grupo.name}</span>
+                <Button
+                  danger
+                  size="small"
+                  onClick={() => handleDeleteGroup(grupo.id)}
+                >
+                  Eliminar
+                </Button>
+              </div>
             ))}
           </Select>
           <Select
