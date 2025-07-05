@@ -30,7 +30,6 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
     const nuevoGrupo = await prisma.equipmentGroup.create({
       data: {
         name,
-        user: undefined, // Se deja explícitamente sin usuario
       },
     });
     res.status(201).json(nuevoGrupo);
