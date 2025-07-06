@@ -46,7 +46,7 @@ app.use(authenticateJWT);
 // app.use("/api/authProtegido", authProtegidoRoutes);
 app.use("/api/equipos", equiposRoutes);
 app.use("/api/mantenimientos", mantenimientosRoutes);
-app.use("/api/grupos", gruposRoutes);
+app.use("/api/grupos", authenticateJWT, gruposRoutes);
 app.use("/api/stats", statsRoutes);
 
 // Puerto
