@@ -9,6 +9,7 @@ import {
   Input,
   Select,
   DatePicker,
+  Popconfirm,
   Tag,
   message,
   Space,
@@ -16,7 +17,6 @@ import {
 import { PlusOutlined, FolderAddOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { confirmarEliminar } from "@/components/confirmarEliminar";
 
 interface Grupo {
   id: string;
@@ -168,30 +168,28 @@ const EquiposTable = () => {
     }
   };
 
-  const handleDeleteGroup = (grupoId: string, grupoName: string) => {
-    confirmarEliminar("grupo", grupoName, async () => {
-      try {
-        const res = await fetch(`${API_BASE}/api/grupos/${grupoId}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  const handleDeleteGroup = async (groupId: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/grupos/${groupId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (res.status === 400) {
-          const data = await res.json();
-          message.warning(data.message || "No se pudo eliminar el grupo");
-        } else if (!res.ok) {
-          throw new Error();
-        } else {
-          message.success("Grupo eliminado");
-          fetchGrupos();
-        }
-      } catch (err) {
-        console.error("Error al eliminar grupo:", err);
-        message.error("Error al eliminar grupo");
+      if (res.status === 400) {
+        const data = await res.json();
+        message.warning(data.message || "No se pudo eliminar el grupo");
+      } else if (!res.ok) {
+        throw new Error();
+      } else {
+        message.success("Grupo eliminado");
+        fetchGrupos(); // actualiza la lista de grupos
       }
-    });
+    } catch (err) {
+      console.error("Error al eliminar grupo:", err);
+      message.error("Error al eliminar grupo");
+    }
   };
 
   useEffect(() => {
@@ -242,13 +240,19 @@ const EquiposTable = () => {
             {grupos.map((grupo) => (
               <div key={grupo.id}>
                 <span>{grupo.name}</span>
-                <Button
-                  danger
-                  size="small"
-                  onClick={() => handleDeleteGroup(grupo.id, grupo.name)}
+                <Popconfirm
+                  title="¿Seguro que quieres eliminar este mantenimiento?"
+                  onConfirm={(e) => {
+                    e?.stopPropagation();
+                    handleDeleteGroup(grupo.id);
+                  }}
+                  okText="Sí"
+                  cancelText="No"
                 >
-                  Eliminar
-                </Button>
+                  <Button danger onClick={(e) => e.stopPropagation()}>
+                    Eliminar
+                  </Button>
+                </Popconfirm>
               </div>
             ))}
           </Select>
@@ -407,13 +411,19 @@ const EquiposTable = () => {
               className="flex justify-between items-center border p-2 rounded mb-2"
             >
               <span>{grupo.name}</span>
-              <Button
-                danger
-                size="small"
-                onClick={() => handleDeleteGroup(grupo.id, grupo.name)}
+              <Popconfirm
+                title="¿Seguro que quieres eliminar este grupo?"
+                onConfirm={(e) => {
+                  e?.stopPropagation();
+                  handleDeleteGroup(grupo.id); // ✅ esto sí existe
+                }}
+                okText="Sí"
+                cancelText="No"
               >
-                Eliminar
-              </Button>
+                <Button danger onClick={(e) => e.stopPropagation()}>
+                  Eliminar
+                </Button>
+              </Popconfirm>
             </div>
           ))}
         </div>
