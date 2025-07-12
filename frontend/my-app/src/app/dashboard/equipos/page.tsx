@@ -235,10 +235,12 @@ const EquiposTable = () => {
             value={selectedGroupId}
             onChange={(value) => setSelectedGroupId(value)}
             style={{ width: 200 }}
-            className="flex justify-between items-center mb-2"
           >
             {grupos.map((grupo) => (
-              <div key={grupo.id}>
+              <div
+                className="flex justify-between items-center mb-2"
+                key={grupo.id}
+              >
                 <span>{grupo.name}</span>
                 <Popconfirm
                   title="¿Seguro que quieres eliminar este mantenimiento?"
@@ -250,7 +252,7 @@ const EquiposTable = () => {
                   cancelText="No"
                 >
                   <Button danger onClick={(e) => e.stopPropagation()}>
-                    Eliminar
+                    X
                   </Button>
                 </Popconfirm>
               </div>
