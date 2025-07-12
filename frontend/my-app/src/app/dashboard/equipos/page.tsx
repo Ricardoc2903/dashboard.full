@@ -228,7 +228,7 @@ const EquiposTable = () => {
             onChange={(e) => setSearchText(e.target.value)}
             style={{ width: 200 }}
           />
-          <Select
+          {/* <Select
             allowClear
             placeholder="Filtrar por grupo"
             value={selectedGroupId}
@@ -243,7 +243,41 @@ const EquiposTable = () => {
             {grupos.map((grupo) => (
               <div
                 key={grupo.id}
-                className="flex justify-between items-center mb-2"
+                className="flex justify-between items-center mb-2 gap-2"
+              >
+                <span>{grupo.name}</span>
+                <Button
+                  danger
+                  size="small"
+                  onClick={() => handleDeleteGroup(grupo.id)}
+                >
+                  X
+                </Button>
+              </div>
+            ))}
+          </Select> */}
+          {/* Filtro por grupo */}
+          <Select
+            allowClear
+            placeholder="Filtrar por grupo"
+            value={selectedGroupId}
+            onChange={(value) => setSelectedGroupId(value)}
+            style={{ width: 200 }}
+          >
+            {grupos.map((grupo) => (
+              <Select.Option key={grupo.id} value={grupo.id}>
+                {grupo.name}
+              </Select.Option>
+            ))}
+          </Select>
+
+          {/* Lista separada con botón de eliminar */}
+          <div className="mt-4">
+            <h4 style={{ marginBottom: 8 }}>Grupos disponibles</h4>
+            {grupos.map((grupo) => (
+              <div
+                key={grupo.id}
+                className="flex justify-between items-center border p-2 rounded mb-2"
               >
                 <span>{grupo.name}</span>
                 <Button
@@ -255,7 +289,8 @@ const EquiposTable = () => {
                 </Button>
               </div>
             ))}
-          </Select>
+          </div>
+
           <Select
             allowClear
             placeholder="Filtrar por estado"
