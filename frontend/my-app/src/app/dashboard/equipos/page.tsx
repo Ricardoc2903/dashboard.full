@@ -228,18 +228,18 @@ const EquiposTable = () => {
             onChange={(e) => setSearchText(e.target.value)}
             style={{ width: 200 }}
           />
-          {/* <Select
+          <Select
             allowClear
             placeholder="Filtrar por grupo"
             value={selectedGroupId}
             onChange={(value) => setSelectedGroupId(value)}
             style={{ width: 200 }}
           >
-            {grupos.map((grupo) => (
+            {/* {grupos.map((grupo) => (
               <Select.Option key={grupo.id} value={grupo.id}>
                 {grupo.name}
               </Select.Option>
-            ))}
+            ))} */}
             {grupos.map((grupo) => (
               <div
                 key={grupo.id}
@@ -251,46 +251,11 @@ const EquiposTable = () => {
                   size="small"
                   onClick={() => handleDeleteGroup(grupo.id)}
                 >
-                  X
+                  x
                 </Button>
               </div>
-            ))}
-          </Select> */}
-          {/* Filtro por grupo */}
-          <Select
-            allowClear
-            placeholder="Filtrar por grupo"
-            value={selectedGroupId}
-            onChange={(value) => setSelectedGroupId(value)}
-            style={{ width: 200 }}
-          >
-            {grupos.map((grupo) => (
-              <Select.Option key={grupo.id} value={grupo.id}>
-                {grupo.name}
-              </Select.Option>
             ))}
           </Select>
-
-          {/* Lista separada con botón de eliminar */}
-          <div className="mt-4">
-            <h4 style={{ marginBottom: 8 }}>Grupos disponibles</h4>
-            {grupos.map((grupo) => (
-              <div
-                key={grupo.id}
-                className="flex justify-between items-center border p-2 rounded mb-2"
-              >
-                <span>{grupo.name}</span>
-                <Button
-                  danger
-                  size="small"
-                  onClick={() => handleDeleteGroup(grupo.id)}
-                >
-                  Eliminar
-                </Button>
-              </div>
-            ))}
-          </div>
-
           <Select
             allowClear
             placeholder="Filtrar por estado"
