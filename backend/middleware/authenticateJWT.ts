@@ -12,7 +12,7 @@ export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: "ADMIN" | "USER";
+    role: "ADMIN" | "USER"; 
   };
 }
 
