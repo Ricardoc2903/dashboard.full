@@ -16,6 +16,7 @@ import {
 import { PlusOutlined, FolderAddOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
+import { confirmarEliminar } from "@/components/confirmarEliminar";
 
 interface Grupo {
   id: string;
@@ -167,28 +168,30 @@ const EquiposTable = () => {
     }
   };
 
-  const handleDeleteGroup = async (groupId: string) => {
-    try {
-      const res = await fetch(`${API_BASE}/api/grupos/${groupId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  const handleDeleteGroup = (grupoId: string, grupoName: string) => {
+    confirmarEliminar("grupo", grupoName, async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/grupos/${grupoId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      if (res.status === 400) {
-        const data = await res.json();
-        message.warning(data.message || "No se pudo eliminar el grupo");
-      } else if (!res.ok) {
-        throw new Error();
-      } else {
-        message.success("Grupo eliminado");
-        fetchGrupos(); // actualiza la lista de grupos
+        if (res.status === 400) {
+          const data = await res.json();
+          message.warning(data.message || "No se pudo eliminar el grupo");
+        } else if (!res.ok) {
+          throw new Error();
+        } else {
+          message.success("Grupo eliminado");
+          fetchGrupos();
+        }
+      } catch (err) {
+        console.error("Error al eliminar grupo:", err);
+        message.error("Error al eliminar grupo");
       }
-    } catch (err) {
-      console.error("Error al eliminar grupo:", err);
-      message.error("Error al eliminar grupo");
-    }
+    });
   };
 
   useEffect(() => {
@@ -237,16 +240,14 @@ const EquiposTable = () => {
             className="flex justify-between items-center mb-2"
           >
             {grupos.map((grupo) => (
-              <div
-                key={grupo.id}
-              >
+              <div key={grupo.id}>
                 <span>{grupo.name}</span>
                 <Button
                   danger
                   size="small"
-                  onClick={() => handleDeleteGroup(grupo.id)}
+                  onClick={() => handleDeleteGroup(grupo.id, grupo.name)}
                 >
-                  x
+                  Eliminar
                 </Button>
               </div>
             ))}
@@ -409,7 +410,7 @@ const EquiposTable = () => {
               <Button
                 danger
                 size="small"
-                onClick={() => handleDeleteGroup(grupo.id)}
+                onClick={() => handleDeleteGroup(grupo.id, grupo.name)}
               >
                 Eliminar
               </Button>
