@@ -234,16 +234,11 @@ const EquiposTable = () => {
             value={selectedGroupId}
             onChange={(value) => setSelectedGroupId(value)}
             style={{ width: 200 }}
+            className="flex justify-between items-center mb-2"
           >
-            {/* {grupos.map((grupo) => (
-              <Select.Option key={grupo.id} value={grupo.id}>
-                {grupo.name}
-              </Select.Option>
-            ))} */}
             {grupos.map((grupo) => (
               <div
                 key={grupo.id}
-                className="flex justify-between items-center mb-2 gap-2"
               >
                 <span>{grupo.name}</span>
                 <Button
