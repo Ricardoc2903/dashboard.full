@@ -235,7 +235,7 @@ const EquiposTable = () => {
             value={selectedGroupId}
             onChange={(value) => setSelectedGroupId(value)}
             style={{ width: 200 }}
-            dropdownRender={() => (
+            >
               <div>
                 {grupos.map((grupo) => (
                   <Select.Option key={grupo.id} value={grupo.id}>
@@ -262,13 +262,6 @@ const EquiposTable = () => {
                   </Select.Option>
                 ))}
               </div>
-            )}
-          >
-            {grupos.map((grupo) => (
-              <Select.Option key={grupo.id} value={grupo.id}>
-                {grupo.name}
-              </Select.Option>
-            ))}
           </Select>
 
           <Select
