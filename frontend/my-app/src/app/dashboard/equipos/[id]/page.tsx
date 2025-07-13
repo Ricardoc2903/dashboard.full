@@ -20,7 +20,7 @@ import {
 import dayjs from "dayjs";
 import { useAuth } from "@/context/AuthContext";
 import withAuth from "@/hoc/withAuth";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 interface Grupo {
   id: string;
@@ -56,6 +56,9 @@ const estadoColor: Record<string, string> = {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+
+
+
 function EquipoDetalle() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -88,6 +91,8 @@ function EquipoDetalle() {
     status: "ACTIVE" | "MAINTENANCE" | "OUT_OF_SERVICE";
     groupId?: string;
   }
+
+  const router = useRouter();
 
   const handleDeleteEquipo = async (equipoId: string) => {
     try {
