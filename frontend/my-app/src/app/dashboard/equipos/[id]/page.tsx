@@ -20,6 +20,7 @@ import {
 import dayjs from "dayjs";
 import { useAuth } from "@/context/AuthContext";
 import withAuth from "@/hoc/withAuth";
+import router from "next/router";
 
 interface Grupo {
   id: string;
@@ -88,20 +89,27 @@ function EquipoDetalle() {
     groupId?: string;
   }
 
-  const handleDeleteEquipo = async () => {
+  const handleDeleteEquipo = async (equipoId: string) => {
     try {
-      const res = await axios.delete(`${API_BASE}/api/equipos/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${API_BASE}/api/equipos/${equipoId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (res.status === 204) {
-        message.success("Equipo eliminado correctamente");
-        window.location.href = "/dashboard/equipos"; // redirige al listado
-      } else {
-        message.error("No se pudo eliminar el equipo");
+      if (!res.ok) {
+        const data = await res.json();
+        const errorMessage = data?.message || "Error al eliminar equipo";
+        message.error(errorMessage);
+        return;
       }
-    } catch (err) {
-      console.error("Error al eliminar equipo:", err);
+
+      message.success("Equipo eliminado correctamente");
+      // Redireccionar o recargar datos
+      router.push("/dashboard/equipos");
+    } catch (error) {
+      console.error("Error al eliminar equipo:", error);
       message.error("Error al eliminar equipo");
     }
   };
@@ -173,19 +181,17 @@ function EquipoDetalle() {
           title={equipo.name}
           extra={
             user?.role === "ADMIN" && (
-                <div className="space-x-2">
-                  <Button onClick={() => setIsEditModalOpen(true)}>
-                    Editar
-                  </Button>
-                  <Popconfirm
-                    title="¿Seguro que quieres eliminar este equipo?"
-                    onConfirm={handleDeleteEquipo}
-                    okText="Sí"
-                    cancelText="No"
-                  >
-                    <Button danger>Eliminar</Button>
-                  </Popconfirm>
-                </div>
+              <div className="space-x-2">
+                <Button onClick={() => setIsEditModalOpen(true)}>Editar</Button>
+                <Popconfirm
+                  title="¿Seguro que quieres eliminar este equipo?"
+                  onConfirm={() => handleDeleteEquipo(equipo.id)}
+                  okText="Sí"
+                  cancelText="No"
+                >
+                  <Button danger>Eliminar</Button>
+                </Popconfirm>
+              </div>
             )
           }
         >
