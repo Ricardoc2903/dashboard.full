@@ -173,8 +173,6 @@ function EquipoDetalle() {
           title={equipo.name}
           extra={
             user?.role === "ADMIN" && (
-              <div className="space-x-2">
-                <Button onClick={() => setIsEditModalOpen(true)}>Editar</Button>
                 <div className="space-x-2">
                   <Button onClick={() => setIsEditModalOpen(true)}>
                     Editar
@@ -188,7 +186,6 @@ function EquipoDetalle() {
                     <Button danger>Eliminar</Button>
                   </Popconfirm>
                 </div>
-              </div>
             )
           }
         >
