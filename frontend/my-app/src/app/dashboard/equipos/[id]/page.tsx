@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
@@ -12,9 +12,10 @@ import {
   Tag,
   Table,
   Form,
-  Input, 
+  Input,
   Select,
   DatePicker,
+  Popconfirm,
 } from "antd";
 import dayjs from "dayjs";
 import { useAuth } from "@/context/AuthContext";
@@ -54,7 +55,6 @@ const estadoColor: Record<string, string> = {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-
 function EquipoDetalle() {
   const { id } = useParams();
   const { user } = useAuth();
@@ -70,7 +70,7 @@ function EquipoDetalle() {
 
   const fetchEquipo = useCallback(async () => {
     try {
-      const res = await axios.get( `${API_BASE}/api/equipos/${id}` , {
+      const res = await axios.get(`${API_BASE}/api/equipos/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEquipo(res.data);
@@ -80,14 +80,31 @@ function EquipoDetalle() {
   }, [id, token]);
 
   interface EquipoFormValues {
-  name: string;
-  type: string;
-  location: string;
-  acquiredAt?: dayjs.Dayjs;
-  status: "ACTIVE" | "MAINTENANCE" | "OUT_OF_SERVICE";
-  groupId?: string;
-}
+    name: string;
+    type: string;
+    location: string;
+    acquiredAt?: dayjs.Dayjs;
+    status: "ACTIVE" | "MAINTENANCE" | "OUT_OF_SERVICE";
+    groupId?: string;
+  }
 
+  const handleDeleteEquipo = async () => {
+    try {
+      const res = await axios.delete(`${API_BASE}/api/equipos/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.status === 204) {
+        message.success("Equipo eliminado correctamente");
+        window.location.href = "/dashboard/equipos"; // redirige al listado
+      } else {
+        message.error("No se pudo eliminar el equipo");
+      }
+    } catch (err) {
+      console.error("Error al eliminar equipo:", err);
+      message.error("Error al eliminar equipo");
+    }
+  };
 
   const fetchMantenimientos = useCallback(async () => {
     try {
@@ -158,6 +175,19 @@ function EquipoDetalle() {
             user?.role === "ADMIN" && (
               <div className="space-x-2">
                 <Button onClick={() => setIsEditModalOpen(true)}>Editar</Button>
+                <div className="space-x-2">
+                  <Button onClick={() => setIsEditModalOpen(true)}>
+                    Editar
+                  </Button>
+                  <Popconfirm
+                    title="¿Seguro que quieres eliminar este equipo?"
+                    onConfirm={handleDeleteEquipo}
+                    okText="Sí"
+                    cancelText="No"
+                  >
+                    <Button danger>Eliminar</Button>
+                  </Popconfirm>
+                </div>
               </div>
             )
           }
@@ -218,11 +248,7 @@ function EquipoDetalle() {
         okText="Guardar"
         cancelText="Cancelar"
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmitEditar}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmitEditar}>
           <Form.Item name="name" label="Nombre" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
