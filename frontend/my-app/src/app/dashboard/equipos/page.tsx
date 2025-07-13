@@ -235,33 +235,32 @@ const EquiposTable = () => {
             value={selectedGroupId}
             onChange={(value) => setSelectedGroupId(value)}
             style={{ width: 200 }}
-            >
-              <div>
-                {grupos.map((grupo) => (
-                  <Select.Option key={grupo.id} value={grupo.id}>
-                    <div className="flex justify-between items-center">
-                      <span>{grupo.name}</span>
-                      <Popconfirm
-                        title="¿Seguro que quieres eliminar este grupo?"
-                        onConfirm={(e) => {
-                          e?.stopPropagation();
-                          handleDeleteGroup(grupo.id);
-                        }}
-                        okText="Sí"
-                        cancelText="No"
-                      >
-                        <Button
-                          danger
-                          size="small"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          X
-                        </Button>
-                      </Popconfirm>
-                    </div>
-                  </Select.Option>
-                ))}
-              </div>
+            dropdownStyle={{ padding: "8px" }}
+          >
+            {grupos.map((grupo) => (
+              <Select.Option key={grupo.id} value={grupo.id}>
+                <div className="flex justify-between items-center">
+                  <span>{grupo.name}</span>
+                  <Popconfirm
+                    title="¿Seguro que quieres eliminar este grupo?"
+                    onConfirm={(e) => {
+                      e?.stopPropagation();
+                      handleDeleteGroup(grupo.id);
+                    }}
+                    okText="Sí"
+                    cancelText="No"
+                  >
+                    <Button
+                      danger
+                      size="small"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      X
+                    </Button>
+                  </Popconfirm>
+                </div>
+              </Select.Option>
+            ))}
           </Select>
 
           <Select
