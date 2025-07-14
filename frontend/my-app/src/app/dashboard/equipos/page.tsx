@@ -351,7 +351,6 @@ const EquiposTable = () => {
           layout="vertical"
           form={form}
           onFinish={handleCreateOrUpdate}
-          initialValues={{ status: "ACTIVO" }}
         >
           <Form.Item label="Nombre" name="name" rules={[{ required: true }]}>
             <Input />
