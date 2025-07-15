@@ -32,7 +32,7 @@ export default function HomePage() {
         </div>
 
         {/* Imagen decorativa */}
-        <div className="hidden md:block flex-1 text-center">
+        <div className="hidden lg:block flex-1 text-center">
           <Image
             src="/undraw.svg"// 📌 Asegúrate de colocar esta imagen en public/
             alt="Gestión de mantenimiento"
