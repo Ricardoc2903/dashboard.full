@@ -221,26 +221,22 @@ const MaintenanceTable = () => {
       title: "Equipo",
       dataIndex: ["equipment", "name"],
       key: "equipment",
-      className: "width: 130 ellipsis: true align: center",
     },
     {
       title: "Fecha",
       dataIndex: "date",
       key: "date",
       render: (fecha: string) => dayjs(fecha).format("DD/MM/YYYY"),
-      className: "width: 130 ellipsis: true align: center",
     },
     {
       title: "Nombre",
       dataIndex: "name",
       key: "name",
-      className: "width: 130 ellipsis: true align: center",
     },
     {
       title: "Estado",
       dataIndex: "status",
       key: "status",
-      className: "width: 130 ellipsis: true align: center",
       render: (estado: string) => (
         <Tag
           color={getEstadoTagColor(estado)}
@@ -254,14 +250,12 @@ const MaintenanceTable = () => {
       title: "Notas",
       dataIndex: "notes",
       key: "notes",
-      className: "width: 130 ellipsis: true align: center",
-      // render: (notas: string) =>
-      //   notas?.length > 50 ? `${notas.slice(0, 50)}...` : notas || "-",
+      render: (notas: string) =>
+        notas?.length > 20 ? `${notas.slice(0, 20)}...` : notas || "-",
     },
     {
       title: "Acciones",
       key: "acciones",
-      className: "width: 130 ellipsis: true align: center",
       render: (_: unknown, record: Mantenimiento) =>
         user?.role === "ADMIN" ? (
           <Space>
