@@ -304,14 +304,27 @@ const EquiposTable = () => {
         scroll={{ x: "max-content" }}
         loading={loading}
         columns={[
-          { title: "Nombre", dataIndex: "name" },
-          { title: "Tipo", dataIndex: "type" },
-          { title: "Ubicación", dataIndex: "location" },
+          {
+            title: "Nombre",
+            dataIndex: "name",
+            className: "width: 130, ellipsis: true,align: center",
+          },
+          {
+            title: "Tipo",
+            dataIndex: "type",
+            className: "width: 130, ellipsis: true,align: center",
+          },
+          {
+            title: "Ubicación",
+            dataIndex: "location",
+            className: "width: 130, ellipsis: true,align: center",
+          },
           {
             title: "Fecha de adquisición",
             dataIndex: "acquiredAt",
             render: (fecha: string) =>
               fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
+            className: "width: 130, ellipsis: true,align: center",
           },
           {
             title: "Estado",
@@ -321,18 +334,21 @@ const EquiposTable = () => {
                 {estado.replace("_", " ")}
               </Tag>
             ),
+            className: "width: 130, ellipsis: true,align: center",
           },
           {
             title: "Grupo",
             dataIndex: ["group", "name"],
             render: (grupo: string) => grupo || "-",
+            className: "width: 130, ellipsis: true,align: center",
           },
         ]}
         onRow={(record) => ({
           onClick: () => {
             router.push(`/dashboard/equipos/${record.id}`);
           },
-          className: "cursor-pointer hover:bg-gray-100 transition",
+          className:
+            "cursor-pointer hover:bg-gray-100 transition width: 130, ellipsis: true,align: center",
         })}
       />
 
@@ -347,11 +363,7 @@ const EquiposTable = () => {
         onOk={() => form.submit()}
         okText={editingEquipo ? "Guardar cambios" : "Crear"}
       >
-        <Form
-          layout="vertical"
-          form={form}
-          onFinish={handleCreateOrUpdate}
-        >
+        <Form layout="vertical" form={form} onFinish={handleCreateOrUpdate}>
           <Form.Item label="Nombre" name="name" rules={[{ required: true }]}>
             <Input />
           </Form.Item>

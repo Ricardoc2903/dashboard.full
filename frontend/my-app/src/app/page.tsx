@@ -2,7 +2,7 @@
 
 import { Button, Typography } from "antd";
 import { useRouter } from "next/navigation";
-// import Image from "next/image";
+import Image from "next/image";
 
 const { Title, Paragraph } = Typography;
 
@@ -32,7 +32,7 @@ export default function HomePage() {
         </div>
 
         {/* Imagen decorativa */}
-        {/* <div className="hidden lg:block flex-1 text-center">
+        <div className="hidden lg:block flex-1 text-center">
           <Image
             src="/undraw.svg"// 📌 Asegúrate de colocar esta imagen en public/
             alt="Gestión de mantenimiento"
@@ -40,7 +40,7 @@ export default function HomePage() {
             height={400}
             priority
           />
-        </div> */}
+        </div>
       </div>
     </div>
   );
