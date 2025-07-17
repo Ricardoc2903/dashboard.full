@@ -307,24 +307,24 @@ const EquiposTable = () => {
           {
             title: "Nombre",
             dataIndex: "name",
-            className: "width: 130, ellipsis: true,align: center",
+            className: "width: 130 ellipsis: true align: center",
           },
           {
             title: "Tipo",
             dataIndex: "type",
-            className: "width: 130, ellipsis: true,align: center",
+            className: "width: 130 ellipsis: true align: center",
           },
           {
             title: "Ubicación",
             dataIndex: "location",
-            className: "width: 130, ellipsis: true,align: center",
+            className: "width: 130  ellipsis: true align: center",
           },
           {
             title: "Fecha de adquisición",
             dataIndex: "acquiredAt",
             render: (fecha: string) =>
               fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
-            className: "width: 130, ellipsis: true,align: center",
+            className: "width: 130 ellipsis: true align: center",
           },
           {
             title: "Estado",
@@ -334,13 +334,13 @@ const EquiposTable = () => {
                 {estado.replace("_", " ")}
               </Tag>
             ),
-            className: "width: 130, ellipsis: true,align: center",
+            className: "width: 130 ellipsis: true align: center",
           },
           {
             title: "Grupo",
             dataIndex: ["group", "name"],
             render: (grupo: string) => grupo || "-",
-            className: "width: 130, ellipsis: true,align: center",
+            className: "width: 130 ellipsis: true align: center",
           },
         ]}
         onRow={(record) => ({
@@ -348,7 +348,7 @@ const EquiposTable = () => {
             router.push(`/dashboard/equipos/${record.id}`);
           },
           className:
-            "cursor-pointer hover:bg-gray-100 transition width: 130, ellipsis: true,align: center",
+            "cursor-pointer hover:bg-gray-100 transition width: 130 ellipsis: true align: center",
         })}
       />
 

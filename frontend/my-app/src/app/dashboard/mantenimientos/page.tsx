@@ -221,22 +221,26 @@ const MaintenanceTable = () => {
       title: "Equipo",
       dataIndex: ["equipment", "name"],
       key: "equipment",
+      className: "width: 130 ellipsis: true align: center",
     },
     {
       title: "Fecha",
       dataIndex: "date",
       key: "date",
       render: (fecha: string) => dayjs(fecha).format("DD/MM/YYYY"),
+      className: "width: 130 ellipsis: true align: center",
     },
     {
       title: "Nombre",
       dataIndex: "name",
       key: "name",
+      className: "width: 130 ellipsis: true align: center",
     },
     {
       title: "Estado",
       dataIndex: "status",
       key: "status",
+      className: "width: 130 ellipsis: true align: center",
       render: (estado: string) => (
         <Tag
           color={getEstadoTagColor(estado)}
@@ -250,12 +254,14 @@ const MaintenanceTable = () => {
       title: "Notas",
       dataIndex: "notes",
       key: "notes",
-      render: (notas: string) =>
-        notas?.length > 50 ? `${notas.slice(0, 50)}...` : notas || "-",
+      className: "width: 130 ellipsis: true align: center",
+      // render: (notas: string) =>
+      //   notas?.length > 50 ? `${notas.slice(0, 50)}...` : notas || "-",
     },
     {
       title: "Acciones",
       key: "acciones",
+      className: "width: 130 ellipsis: true align: center",
       render: (_: unknown, record: Mantenimiento) =>
         user?.role === "ADMIN" ? (
           <Space>
@@ -283,36 +289,6 @@ const MaintenanceTable = () => {
           </Space>
         ) : null, // 👈 si no es admin, no se muestra nada
     },
-
-    // {
-    //   title: "Acciones",
-    //   key: "acciones",
-    //   render: (_: unknown, record: Mantenimiento) => (
-    //     <Space>
-    //       <Button
-    //         onClick={(e) => {
-    //           e.stopPropagation();
-    //           handleEdit(record);
-    //         }}
-    //       >
-    //         Editar
-    //       </Button>
-    //       <Popconfirm
-    //         title="¿Seguro que quieres eliminar este mantenimiento?"
-    //         onConfirm={(e) => {
-    //           e?.stopPropagation();
-    //           handleDelete(record.id);
-    //         }}
-    //         okText="Sí"
-    //         cancelText="No"
-    //       >
-    //         <Button danger onClick={(e) => e.stopPropagation()}>
-    //           Eliminar
-    //         </Button>
-    //       </Popconfirm>
-    //     </Space>
-    //   ),
-    // },
   ];
 
   return (
