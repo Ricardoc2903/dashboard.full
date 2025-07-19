@@ -17,6 +17,7 @@ import {
   DatePicker,
   Popconfirm,
 } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useAuth } from "@/context/AuthContext";
 import withAuth from "@/hoc/withAuth";
@@ -194,7 +195,7 @@ function EquipoDetalle() {
                   okText="Sí"
                   cancelText="No"
                 >
-                  <Button danger>Eliminar</Button>
+                  <Button danger><DeleteOutlined /></Button>
                 </Popconfirm>
               </div>
             )
