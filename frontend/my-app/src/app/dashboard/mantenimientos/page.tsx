@@ -212,74 +212,74 @@ const MaintenanceTable = () => {
     return matchText && matchEquipo && matchEstado && matchDate;
   });
 
-  const columns = [
-    {
-      title: "Equipo",
-      dataIndex: ["equipment", "name"],
-      key: "equipment",
-    },
-    {
-      title: "Fecha",
-      dataIndex: "date",
-      key: "date",
-      render: (fecha: string) => dayjs(fecha).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Nombre",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Estado",
-      dataIndex: "status",
-      key: "status",
-      render: (estado: string) => (
-        <Tag
-          color={getEstadoTagColor(estado)}
-          style={{ textTransform: "capitalize" }}
-        >
-          {estado.replace("_", " ")}
-        </Tag>
-      ),
-    },
-    {
-      title: "Notas",
-      dataIndex: "notes",
-      key: "notes",
-      render: (notas: string) =>
-        notas?.length > 20 ? `${notas.slice(0, 20)}...` : notas || "-",
-    },
-    {
-      title: "Acciones",
-      key: "acciones",
-      render: (_: unknown, record: Mantenimiento) =>
-        user?.role === "ADMIN" ? (
-          <Space>
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEdit(record);
-              }}
-            >
-              Editar
-            </Button>
-            <Popconfirm
-              title="¿Seguro que quieres eliminar este mantenimiento?"
-              onConfirm={(e) => {
-                e?.stopPropagation();
-                handleDelete(record.id);
-              }}
-              okText="Sí"
-              cancelText="No"
-            >
-              <Button danger onClick={(e) => e.stopPropagation()}>
-                Eliminar
-              </Button>
-            </Popconfirm>
-          </Space>
-        ) : null, // 👈 si no es admin, no se muestra nada
-    },
-  ];
+  // const columns = [
+  //   {
+  //     title: "Equipo",
+  //     dataIndex: ["equipment", "name"],
+  //     key: "equipment",
+  //   },
+  //   {
+  //     title: "Fecha",
+  //     dataIndex: "date",
+  //     key: "date",
+  //     render: (fecha: string) => dayjs(fecha).format("DD/MM/YYYY"),
+  //   },
+  //   {
+  //     title: "Nombre",
+  //     dataIndex: "name",
+  //     key: "name",
+  //   },
+  //   {
+  //     title: "Estado",
+  //     dataIndex: "status",
+  //     key: "status",
+  //     render: (estado: string) => (
+  //       <Tag
+  //         color={getEstadoTagColor(estado)}
+  //         style={{ textTransform: "capitalize" }}
+  //       >
+  //         {estado.replace("_", " ")}
+  //       </Tag>
+  //     ),
+  //   },
+  //   {
+  //     title: "Notas",
+  //     dataIndex: "notes",
+  //     key: "notes",
+  //     render: (notas: string) =>
+  //       notas?.length > 20 ? `${notas.slice(0, 20)}...` : notas || "-",
+  //   },
+  //   {
+  //     title: "Acciones",
+  //     key: "acciones",
+  //     render: (_: unknown, record: Mantenimiento) =>
+  //       user?.role === "ADMIN" ? (
+  //         <Space>
+  //           <Button
+  //             onClick={(e) => {
+  //               e.stopPropagation();
+  //               handleEdit(record);
+  //             }}
+  //           >
+  //             Editar
+  //           </Button>
+  //           <Popconfirm
+  //             title="¿Seguro que quieres eliminar este mantenimiento?"
+  //             onConfirm={(e) => {
+  //               e?.stopPropagation();
+  //               handleDelete(record.id);
+  //             }}
+  //             okText="Sí"
+  //             cancelText="No"
+  //           >
+  //             <Button danger onClick={(e) => e.stopPropagation()}>
+  //               Eliminar
+  //             </Button>
+  //           </Popconfirm>
+  //         </Space>
+  //       ) : null, // 👈 si no es admin, no se muestra nada
+  //   },
+  // ];
 
   return (
     <>
@@ -329,7 +329,7 @@ const MaintenanceTable = () => {
         </div>
       </div>
 
-      <Table
+      {/* <Table
         rowKey="id"
         pagination={false}
         scroll={{ x: "max-content" }}
@@ -339,15 +339,16 @@ const MaintenanceTable = () => {
           onClick: () => router.push(`/dashboard/mantenimientos/${record.id}`),
           className: "cursor-pointer hover:bg-gray-100 transition",
         })}
-      />
+      /> */}
 
       <Table
         dataSource={filteredData}
         rowKey="id"
+        pagination={false}
+        scroll={{ x: "max-content" }}
         onRow={(record) => ({
           onClick: () => router.push(`/dashboard/mantenimientos/${record.id}`),
         })}
-        scroll={{ x: true }}
         columns={[
           {
             title: "Equipo",
@@ -386,6 +387,7 @@ const MaintenanceTable = () => {
             title: "Estado",
             dataIndex: "status",
             key: "status",
+            align: "center",
             render: (estado: string) => (
               <Tag
                 className="truncate max-w-[150px] overflow-hidden text-center"
@@ -402,7 +404,7 @@ const MaintenanceTable = () => {
             key: "notes",
             align: "center",
             render: (notas: string) => (
-              <div className="truncate max-w-[150px] overflow-hidden text-center" >
+              <div className="truncate max-w-[150px] overflow-hidden text-center">
                 {notas?.length > 20 ? `${notas.slice(0, 20)}...` : notas || "-"}
               </div>
             ),
