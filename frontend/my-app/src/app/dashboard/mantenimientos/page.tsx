@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import withAuth from "@/hoc/withAuth";
 import axios from "axios";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, } from "@ant-design/icons";
 import {
   Table,
   Tag,
@@ -434,7 +434,7 @@ const MaintenanceTable = () => {
                     cancelText="No"
                   >
                     <Button danger onClick={(e) => e.stopPropagation()}>
-                      Eliminar
+                      <DeleteOutlined />
                     </Button>
                   </Popconfirm>
                 </Space>
