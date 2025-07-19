@@ -62,7 +62,6 @@ const getEstadoTagColor = (estado: string) => {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-
 const MaintenanceTable = () => {
   const [data, setData] = useState<Mantenimiento[]>([]);
   const [equipos, setEquipos] = useState<Equipo[]>([]);
@@ -102,12 +101,9 @@ const MaintenanceTable = () => {
 
   const fetchMantenimientos = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `${API_BASE}/api/mantenimientos`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await axios.get(`${API_BASE}/api/mantenimientos`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setData(response.data);
     } catch (error) {
       console.error("Error al obtener mantenimientos", error);
@@ -333,17 +329,21 @@ const MaintenanceTable = () => {
         </div>
       </div>
 
-      <Table
-        rowKey="id"
-        pagination={false}
-        scroll={{ x: "max-content" }}
-        columns={columns}
-        dataSource={filteredData}
-        onRow={(record) => ({
-          onClick: () => router.push(`/dashboard/mantenimientos/${record.id}`),
-          className: "cursor-pointer hover:bg-gray-100 transition",
-        })}
-      />
+      <div className="overflow-x-auto p-2">
+        <Table
+          rowKey="id"
+          pagination={false}
+          scroll={{ x: "max-content" }}
+          columns={columns}
+          className="w-full text-center border shadow-sm text-sm sm:text-xs md:text-sm"
+          dataSource={filteredData}
+          onRow={(record) => ({
+            onClick: () =>
+              router.push(`/dashboard/mantenimientos/${record.id}`),
+            className: "cursor-pointer hover:bg-gray-100 transition",
+          })}
+        />
+      </div>
 
       {/* Modal Editar */}
       <Modal
