@@ -367,6 +367,7 @@ const EquiposTable = () => {
           {
             title: "Nombre",
             dataIndex: "name",
+            align: "center",
             render: (text: string) => (
               <div className="truncate max-w-[150px] overflow-hidden text-center">
                 {text}
@@ -376,6 +377,7 @@ const EquiposTable = () => {
           {
             title: "Tipo",
             dataIndex: "type",
+            align: "center",
             render: (text: string) => (
               <div className="truncate max-w-[150px] overflow-hidden text-center">
                 {text}
@@ -385,6 +387,7 @@ const EquiposTable = () => {
           {
             title: "Ubicación",
             dataIndex: "location",
+            align: "center",
             render: (text: string) => (
               <div className="truncate max-w-[150px] overflow-hidden text-center">
                 {text}
@@ -394,12 +397,17 @@ const EquiposTable = () => {
           {
             title: "Fecha de adquisición",
             dataIndex: "acquiredAt",
-            render: (fecha: string) =>
-              fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
+            align: "center",
+            render: (fecha: string) => (
+              <div className="truncate max-w-[150px] overflow-hidden text-center">
+                {fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-"}
+              </div>
+            ),
           },
           {
             title: "Estado",
             dataIndex: "status",
+            align: "center",
             render: (estado: string) => (
               <Tag
                 className="truncate max-w-[150px] overflow-hidden text-center"
@@ -412,6 +420,7 @@ const EquiposTable = () => {
           {
             title: "Grupo",
             dataIndex: ["group", "name"],
+            align: "center",
             render: (grupo: string) => (
               <div className="truncate max-w-[150px] overflow-hidden text-center">
                 {grupo || "-"}
