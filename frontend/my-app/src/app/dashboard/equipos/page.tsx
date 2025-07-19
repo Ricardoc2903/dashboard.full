@@ -298,66 +298,6 @@ const EquiposTable = () => {
         </div>
       </div>
 
-      {/* <Table
-        rowKey="id"
-        dataSource={filteredEquipos}
-        scroll={{ x: "max-content" }}
-        loading={loading}
-        columns={[
-          {
-            title: "Nombre",
-            dataIndex: "name",
-            render: (text: string) => (
-              <div className="ellipsis-cell">{text}</div>
-            ),
-          },
-          {
-            title: "Tipo",
-            dataIndex: "type",
-            render: (text: string) => (
-              <div className="ellipsis-cell">{text}</div>
-            ),
-          },
-          {
-            title: "Ubicación",
-            dataIndex: "location",
-            render: (text: string) => (
-              <div className="ellipsis-cell">{text}</div>
-            ),
-          },
-          {
-            title: "Fecha de adquisición",
-            dataIndex: "acquiredAt",
-            render: (fecha: string) =>
-              fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
-          },
-          {
-            title: "Estado",
-            dataIndex: "status",
-            render: (estado: string) => (
-              <Tag
-                className="ellipsis-cell"
-                color={estadoColor[estado as keyof typeof estadoColor]}
-              >
-                {estado.replace("_", " ")}
-              </Tag>
-            ),
-          },
-          {
-            title: "Grupo",
-            dataIndex: ["group", "name"],
-            render: (grupo: string) => grupo || "-",
-          },
-        ]}
-        onRow={(record) => ({
-          onClick: () => {
-            router.push(`/dashboard/equipos/${record.id}`);
-          },
-          className:
-            "cursor-pointer hover:bg-gray-100 transition",
-        })}
-      /> */}
-
       <Table
         rowKey="id"
         dataSource={filteredEquipos}

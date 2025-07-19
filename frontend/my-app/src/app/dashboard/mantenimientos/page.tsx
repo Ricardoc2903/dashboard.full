@@ -329,21 +329,117 @@ const MaintenanceTable = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto p-2">
-        <Table
-          rowKey="id"
-          pagination={false}
-          scroll={{ x: "max-content" }}
-          columns={columns}
-          className="w-full text-center border shadow-sm text-sm sm:text-xs md:text-sm"
-          dataSource={filteredData}
-          onRow={(record) => ({
-            onClick: () =>
-              router.push(`/dashboard/mantenimientos/${record.id}`),
-            className: "cursor-pointer hover:bg-gray-100 transition",
-          })}
-        />
-      </div>
+      <Table
+        rowKey="id"
+        pagination={false}
+        scroll={{ x: "max-content" }}
+        columns={columns}
+        dataSource={filteredData}
+        onRow={(record) => ({
+          onClick: () => router.push(`/dashboard/mantenimientos/${record.id}`),
+          className: "cursor-pointer hover:bg-gray-100 transition",
+        })}
+      />
+
+      <Table
+        dataSource={filteredData}
+        rowKey="id"
+        onRow={(record) => ({
+          onClick: () => router.push(`/dashboard/mantenimientos/${record.id}`),
+        })}
+        scroll={{ x: true }}
+        columns={[
+          {
+            title: "Equipo",
+            dataIndex: ["equipment", "name"],
+            key: "equipment",
+            align: "center",
+            render: (text: string) => (
+              <div className="truncate max-w-[150px] overflow-hidden text-center">
+                {text}
+              </div>
+            ),
+          },
+          {
+            title: "Fecha",
+            dataIndex: "date",
+            key: "date",
+            render: (fecha: string) => (
+              <div className="truncate max-w-[150px] overflow-hidden text-center">
+                {fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-"}
+              </div>
+            ),
+            align: "center",
+          },
+          {
+            title: "Nombre",
+            dataIndex: "name",
+            key: "name",
+            align: "center",
+            render: (text: string) => (
+              <div className="truncate max-w-[150px] overflow-hidden text-center">
+                {text}
+              </div>
+            ),
+          },
+          {
+            title: "Estado",
+            dataIndex: "status",
+            key: "status",
+            render: (estado: string) => (
+              <Tag
+                className="truncate max-w-[150px] overflow-hidden text-center"
+                color={getEstadoTagColor(estado)}
+                style={{ textTransform: "capitalize" }}
+              >
+                {estado.replace("_", " ")}
+              </Tag>
+            ),
+          },
+          {
+            title: "Notas",
+            dataIndex: "notes",
+            key: "notes",
+            align: "center",
+            render: (notas: string) => (
+              <div className="truncate max-w-[150px] overflow-hidden text-center" >
+                {notas?.length > 20 ? `${notas.slice(0, 20)}...` : notas || "-"}
+              </div>
+            ),
+          },
+          {
+            title: "Acciones",
+            key: "acciones",
+            align: "center",
+            render: (_: unknown, record: Mantenimiento) =>
+              user?.role === "ADMIN" ? (
+                <Space className="truncate max-w-[150px] overflow-hidden text-center">
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEdit(record);
+                    }}
+                  >
+                    Editar
+                  </Button>
+                  <Popconfirm
+                    title="¿Seguro que quieres eliminar este mantenimiento?"
+                    onConfirm={(e) => {
+                      e?.stopPropagation();
+                      handleDelete(record.id);
+                    }}
+                    okText="Sí"
+                    cancelText="No"
+                  >
+                    <Button danger onClick={(e) => e.stopPropagation()}>
+                      Eliminar
+                    </Button>
+                  </Popconfirm>
+                </Space>
+              ) : null,
+          },
+        ]}
+      />
 
       {/* Modal Editar */}
       <Modal
