@@ -84,51 +84,6 @@ const UserSettings: React.FC = () => {
   // Formulario de creación de admin
   const profileTab = (
     <>
-      <Title level={4}>Crear nuevo usuario administrador</Title>
-      <Text>Completa los campos para registrar un usuario con rol ADMIN.</Text>
-      <Divider />
-      <Form<AdminFormValues>
-        layout="vertical"
-        style={{ maxWidth: 400 }}
-      >
-        <Form.Item
-          label="Nombre"
-          name="name"
-          rules={[{ required: true, message: "Por favor ingresa un nombre" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Correo electrónico"
-          name="email"
-          rules={[
-            { required: true, message: "Por favor ingresa un correo" },
-            { type: "email", message: "Correo inválido" },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Contraseña"
-          name="password"
-          rules={[
-            { required: true, message: "Por favor ingresa una contraseña" },
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Crear administrador
-          </Button>
-        </Form.Item>
-      </Form>
-    </>
-  );
-
-  // Formulario de cambio de contraseña
-  const securityTab = (
-    <>
       <Title level={4}>Seguridad</Title>
       <Text>Cambia tu contraseña o cierra sesión.</Text>
       <Divider />
