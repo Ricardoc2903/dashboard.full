@@ -17,7 +17,6 @@ import {
 import {
   SettingOutlined,
   UserOutlined,
-  LockOutlined,
   GoogleOutlined,
   GithubOutlined,
   LogoutOutlined,
@@ -225,14 +224,6 @@ const UserSettings: React.FC = () => {
           },
         ]
       : []),
-    {
-      key: "security",
-      label: (
-        <span>
-          <LockOutlined /> Seguridad
-        </span>
-      ),
-    },
     {
       key: "preferences",
       label: (
