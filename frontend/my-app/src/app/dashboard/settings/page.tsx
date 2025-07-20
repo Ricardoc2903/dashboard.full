@@ -29,7 +29,6 @@ import axios from "axios";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 const { Title, Text } = Typography;
 
-type AdminFormValues = { name: string; email: string; password: string };
 type PasswordFormValues = { currentPassword: string; newPassword: string };
 
 const UserSettings: React.FC = () => {
@@ -233,7 +232,6 @@ const UserSettings: React.FC = () => {
           <LockOutlined /> Seguridad
         </span>
       ),
-      children: securityTab,
     },
     {
       key: "preferences",
