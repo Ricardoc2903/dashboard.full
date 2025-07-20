@@ -1,5 +1,3 @@
-
-
 // src/app/dashboard/settings/page.tsx
 "use client";
 
@@ -62,29 +60,6 @@ const UserSettings: React.FC = () => {
   const toggleGoogle = () => setGoogleConnected((prev) => !prev);
   const toggleGitHub = () => setGitHubConnected((prev) => !prev);
 
-  // 1) Crear usuario ADMIN (solo admins verán este form)
-  const handleCreateAdmin = async (values: AdminFormValues) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `${API_BASE}/api/authProtegido/create-user`,
-        {
-          name: values.name,
-          email: values.email,
-          password: values.password,
-          role: "ADMIN",
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      message.success("Usuario administrador creado correctamente");
-    } catch (error) {
-      console.error("Error al crear usuario admin:", error);
-      message.error("Error al crear el usuario");
-    }
-  };
-
   // 2) Cambiar contraseña (todos los usuarios autenticados)
   const handleChangePassword = async (values: PasswordFormValues) => {
     try {
@@ -115,7 +90,6 @@ const UserSettings: React.FC = () => {
       <Form<AdminFormValues>
         layout="vertical"
         style={{ maxWidth: 400 }}
-        onFinish={handleCreateAdmin}
       >
         <Form.Item
           label="Nombre"
