@@ -11,6 +11,7 @@ import {
 import { Layout, Menu, Button, Drawer } from "antd";
 import { useRouter } from "next/navigation";
 import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
+import Image from "next/image";
 
 const { Sider } = Layout;
 
@@ -105,7 +106,7 @@ const SideNav: React.FC = () => {
           borderRadius: 6,
         }}
       >
-        <img src="../public/logo_oscuro.png" alt="logo" />
+        <Image src="../public/logo_oscuro.png" alt="logo" />
       </div>
       <Menu
         theme="dark"
