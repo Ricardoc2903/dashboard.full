@@ -107,7 +107,7 @@ const SideNav: React.FC = () => {
         }}
       >
         <Image
-          src="/undrawps.svg"
+          src="/logo_oscuro.png"
           alt="Decoración login"
           fill
           className="object-contain"
