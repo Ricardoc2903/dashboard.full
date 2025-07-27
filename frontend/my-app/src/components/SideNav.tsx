@@ -106,8 +106,14 @@ const SideNav: React.FC = () => {
           borderRadius: 6,
         }}
       >
-        <Image src="@/public/logo_oscuro.png" alt="logo" width={64} height={16} />
-      </div> 
+        <Image
+          src="/undrawps.svg"
+          alt="Decoración login"
+          fill
+          className="object-contain"
+          priority
+        />
+      </div>
       <Menu
         theme="dark"
         mode="inline"
