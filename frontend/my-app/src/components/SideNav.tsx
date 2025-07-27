@@ -103,14 +103,25 @@ const SideNav: React.FC = () => {
         style={{
           height: 64,
           margin: 16,
-          background: "red",
+          background: "#001529",
           borderRadius: 6,
         }}
       >
-        <Image
-          src="/logo_oscuro.png"
-          alt="Decoración login"
-        />
+        {collapsed ? (
+          <Image
+            src="/logoSM.png"
+            alt="Logo reducido"
+            width={40}
+            height={40}
+          />
+        ) : (
+          <Image
+            src="/logo_oscuro.png"
+            alt="Logo expandido"
+            width={160}
+            height={40}
+          />
+        )}
       </div>
       <Menu
         theme="dark"
