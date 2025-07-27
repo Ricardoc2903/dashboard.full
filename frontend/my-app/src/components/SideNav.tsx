@@ -110,9 +110,6 @@ const SideNav: React.FC = () => {
         <Image
           src="/logo_oscuro.png"
           alt="Decoración login"
-          fill
-          className="object-contain"
-          priority
         />
       </div>
       <Menu
