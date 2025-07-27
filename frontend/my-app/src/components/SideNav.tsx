@@ -106,8 +106,8 @@ const SideNav: React.FC = () => {
           borderRadius: 6,
         }}
       >
-        <Image src="../public/logo_oscuro.png" alt="logo" />
-      </div>
+        <Image src="../public/logo_oscuro.png" alt="logo" width={64} height={16} />
+      </div> 
       <Menu
         theme="dark"
         mode="inline"
