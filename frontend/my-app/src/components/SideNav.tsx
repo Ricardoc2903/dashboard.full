@@ -70,7 +70,7 @@ const SideNav: React.FC = () => {
           closable={false}
           onClose={() => setMobileOpen(false)}
           open={mobileOpen}
-          mask={false}
+          maskStyle={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
           bodyStyle={{ padding: 0 }}
         >
           <Menu
@@ -103,7 +103,7 @@ const SideNav: React.FC = () => {
         style={{
           height: 64,
           margin: 16,
-          background: "rgba(255, 255, 255, 0.2)",
+          background: "red",
           borderRadius: 6,
         }}
       >
