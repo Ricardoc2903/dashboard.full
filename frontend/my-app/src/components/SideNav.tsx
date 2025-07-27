@@ -104,7 +104,9 @@ const SideNav: React.FC = () => {
           background: "rgba(255, 255, 255, 0.2)",
           borderRadius: 6,
         }}
-      />
+      >
+        <img src="../public/logo_oscuro.png" alt="logo" />
+      </div>
       <Menu
         theme="dark"
         mode="inline"
