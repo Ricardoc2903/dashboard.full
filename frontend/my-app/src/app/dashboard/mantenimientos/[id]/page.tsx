@@ -3,19 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import {
-  Card,
-  Descriptions,
-  Button,
-  Spin,
-  message,
-} from "antd";
+import { Card, Descriptions, Button, Spin, message } from "antd";
 import dayjs from "dayjs";
 
 interface Archivo {
   id: string;
   filename: string;
-  url: string;  // Viene del backend: puede ser absoluta o relativa
+  url: string; // Viene del backend: puede ser absoluta o relativa
 }
 
 interface Mantenimiento {
@@ -26,6 +20,7 @@ interface Mantenimiento {
   notes?: string;
   equipment: { name: string };
   archivos?: Archivo[];
+  user?: { name?: string }; // 👈 Agregado
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -34,10 +29,13 @@ const MantenimientoDetalle = () => {
   const { id } = useParams();
   const router = useRouter();
 
-  const [mantenimiento, setMantenimiento] = useState<Mantenimiento | null>(null);
+  const [mantenimiento, setMantenimiento] = useState<Mantenimiento | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   // 1) Traer detalle con `archivos: {id, filename, url}[]`
   const fetchMantenimiento = useCallback(async () => {
@@ -92,9 +90,11 @@ const MantenimientoDetalle = () => {
           <Descriptions.Item label="Notas">
             {mantenimiento.notes || "Sin notas"}
           </Descriptions.Item>
+          <Descriptions.Item label="Creado por">
+            {mantenimiento.user?.name || "Sin datos"}
+          </Descriptions.Item>
         </Descriptions>
       </Card>
-
     </div>
   );
 };

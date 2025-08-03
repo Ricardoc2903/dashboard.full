@@ -79,6 +79,7 @@ router.get(
         include: {
           equipment: { include: { group: true } },
           files: true,
+          user: true,
         },
       });
       if (!m) {
