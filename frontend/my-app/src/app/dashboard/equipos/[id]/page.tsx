@@ -39,6 +39,7 @@ interface Equipo {
     id: string;
     name: string;
   };
+  user?: { name?: string };
 }
 
 interface Mantenimiento {
@@ -56,9 +57,6 @@ const estadoColor: Record<string, string> = {
 };
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-
-
 
 function EquipoDetalle() {
   const { id } = useParams();
@@ -195,7 +193,9 @@ function EquipoDetalle() {
                   okText="Sí"
                   cancelText="No"
                 >
-                  <Button danger><DeleteOutlined /></Button>
+                  <Button danger>
+                    <DeleteOutlined />
+                  </Button>
                 </Popconfirm>
               </div>
             )
@@ -218,6 +218,9 @@ function EquipoDetalle() {
             </Descriptions.Item>
             <Descriptions.Item label="Grupo">
               {equipo.group?.name || "-"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Creado por">
+              {equipo.user?.name || "Sin datos"}
             </Descriptions.Item>
           </Descriptions>
         </Card>

@@ -121,6 +121,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
       where: { id },
       include: {
         group: true,
+        user: true,
         mantenimientos: {
           orderBy: { date: "desc" },
         },
