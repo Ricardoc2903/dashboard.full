@@ -1,7 +1,7 @@
 // src/app/dashboard/settings/page.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import withAuth from "@/hoc/withAuth";
 import {
   Tabs,
@@ -13,6 +13,10 @@ import {
   Tooltip,
   Form,
   message,
+  Table,
+  Modal,
+  Popconfirm,
+  Select,
 } from "antd";
 import {
   SettingOutlined,
@@ -20,6 +24,7 @@ import {
   GoogleOutlined,
   GithubOutlined,
   LogoutOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
@@ -29,6 +34,14 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 const { Title, Text } = Typography;
 
 type PasswordFormValues = { currentPassword: string; newPassword: string };
+
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  role: "ADMIN" | "USER";
+  createdAt: string;
+}
 
 const UserSettings: React.FC = () => {
   // Theme context
@@ -57,6 +70,66 @@ const UserSettings: React.FC = () => {
 
   const toggleGoogle = () => setGoogleConnected((prev) => !prev);
   const toggleGitHub = () => setGitHubConnected((prev) => !prev);
+
+  // Gestión de usuarios (solo admins)
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserData | null>(null);
+  const [editForm] = Form.useForm();
+
+  const fetchUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API_BASE}/api/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUsers(res.data);
+    } catch {
+      message.error("Error al obtener usuarios");
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.role === "ADMIN") {
+      fetchUsers();
+    }
+  }, [user]);
+
+  const handleEdit = (record: UserData) => {
+    setEditingUser(record);
+    editForm.setFieldsValue(record);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API_BASE}/api/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      message.success("Usuario eliminado");
+      fetchUsers();
+    } catch {
+      message.error("Error al eliminar usuario");
+    }
+  };
+
+  const submitEdit = async () => {
+    try {
+      const values = await editForm.validateFields();
+      const token = localStorage.getItem("token");
+      await axios.put(`${API_BASE}/api/users/${editingUser!.id}`, values, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      message.success("Usuario actualizado");
+      setEditingUser(null);
+      fetchUsers();
+    } catch {
+      message.error("Error al actualizar usuario");
+    }
+  };
 
   // 2) Cambiar contraseña (todos los usuarios autenticados)
   const handleChangePassword = async (values: PasswordFormValues) => {
@@ -208,9 +281,74 @@ const UserSettings: React.FC = () => {
     </>
   );
 
+  // Pestaña de usuarios (solo admins)
+  const usersTab = (
+    <>
+      <Title level={4}>Usuarios</Title>
+      <Table<UserData>
+        dataSource={users}
+        rowKey="id"
+        loading={loadingUsers}
+        columns={[
+          { title: "Nombre", dataIndex: "name" },
+          { title: "Email", dataIndex: "email" },
+          { title: "Rol", dataIndex: "role" },
+          {
+            title: "Acciones",
+            render: (_: unknown, record: UserData) => (
+              <>
+                <Button type="link" onClick={() => handleEdit(record)}>
+                  Editar
+                </Button>
+                <Popconfirm
+                  title="¿Eliminar usuario?"
+                  onConfirm={() => handleDelete(record.id)}
+                >
+                  <Button type="link" danger>
+                    Eliminar
+                  </Button>
+                </Popconfirm>
+              </>
+            ),
+          },
+        ]}
+      />
+
+      <Modal
+        open={!!editingUser}
+        title="Editar usuario"
+        onCancel={() => setEditingUser(null)}
+        onOk={submitEdit}
+      >
+        <Form form={editForm} layout="vertical">
+          <Form.Item
+            label="Nombre"
+            name="name"
+            rules={[{ required: true, message: "Ingresa el nombre" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, type: "email", message: "Email inválido" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item label="Rol" name="role" rules={[{ required: true }]}>
+            <Select>
+              <Select.Option value="ADMIN">ADMIN</Select.Option>
+              <Select.Option value="USER">USER</Select.Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  );
+
   // Armamos el array de pestañas según el rol
   const items = [
-    // Solo admins ven la pestaña de creación de otros admins
+    // Solo admins ven la pestaña de creación de otros admins y la gestión de usuarios
     ...(user?.role === "ADMIN"
       ? [
           {
@@ -221,6 +359,15 @@ const UserSettings: React.FC = () => {
               </span>
             ),
             children: profileTab,
+          },
+          {
+            key: "users",
+            label: (
+              <span>
+                <TeamOutlined /> Usuarios
+              </span>
+            ),
+            children: usersTab,
           },
         ]
       : []),
@@ -237,7 +384,7 @@ const UserSettings: React.FC = () => {
 
   return (
     <Tabs
-      defaultActiveKey={user?.role === "ADMIN" ? "profile" : "security"}
+      defaultActiveKey={user?.role === "ADMIN" ? "profile" : "preferences"}
       items={items}
       tabPosition="top"
       style={{ padding: 24 }}
