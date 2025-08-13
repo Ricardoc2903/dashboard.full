@@ -96,10 +96,17 @@ router.post(
 
       // 1) Validar campos
       if (!email || !password) {
-        // Si falta email o password devolvemos un 400 genérico
+        // Identificar exactamente qué campos faltan
+        const missingFields: string[] = [];
+        if (!email) missingFields.push("email");
+        if (!password) missingFields.push("password");
+
         res
           .status(400)
-          .json({ message: "Email y contraseña requeridos.", missingFields: ["email", "password"] });
+          .json({
+            message: "Email y contraseña requeridos.",
+            missingFields,
+          });
         return;
       }
 
