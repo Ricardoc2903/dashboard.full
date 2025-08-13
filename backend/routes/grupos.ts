@@ -54,10 +54,11 @@ router.post("/", async (req: AuthenticatedRequest, res: Response): Promise<void>
 // ✅ DELETE: Eliminar grupo (solo si no tiene equipos asociados)
 router.delete("/:id", async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  const userId = Number(id);
 
   try {
     // Verificar que el grupo exista
-    const grupo = await prisma.equipmentGroup.findUnique({ where: { id } });
+    const grupo = await prisma.equipmentGroup.findUnique({ where: { id: userId } });
 
     if (!grupo) {
       res.status(404).json({ message: "Grupo no encontrado" });
@@ -66,7 +67,7 @@ router.delete("/:id", async (req: AuthenticatedRequest, res: Response): Promise<
 
     // Verificar si tiene equipos asociados
     const equipos = await prisma.equipment.findMany({
-      where: { groupId: id },
+      where: { groupId: userId },
     });
 
     if (equipos.length > 0) {
@@ -76,7 +77,7 @@ router.delete("/:id", async (req: AuthenticatedRequest, res: Response): Promise<
       return;
     }
 
-    await prisma.equipmentGroup.delete({ where: { id } });
+    await prisma.equipmentGroup.delete({ where: { id: userId } });
     res.status(204).send();
   } catch (error) {
     console.error("Error al eliminar grupo:", error);

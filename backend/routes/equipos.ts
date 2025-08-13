@@ -68,6 +68,7 @@ router.put("/:id", async (req: Request, res: Response): Promise<void> => {
 
   const { id } = req.params;
   const { name, type, location, acquiredAt, status, groupId } = typedReq.body;
+  const userId = Number(id);
 
   if (!name || !type || !location || !status) {
     res.status(400).json({ message: "Faltan campos obligatorios" });
@@ -76,7 +77,7 @@ router.put("/:id", async (req: Request, res: Response): Promise<void> => {
 
   try {
     const actualizado = await prisma.equipment.update({
-      where: { id },
+      where: { id: userId },
       data: {
         name,
         type,
@@ -101,9 +102,11 @@ router.delete("/:id", async (req: Request, res: Response): Promise<void> => {
     res.status(401).json({ message: "No autorizado" });
     return;
   }
+  const { id } = req.params;
+  const userId = Number(id);
 
   try {
-    await prisma.equipment.delete({ where: { id: req.params.id } });
+    await prisma.equipment.delete({ where: { id: userId } });
     res.status(204).send(); // ✅ Correcto
   } catch (err) {
     console.error("Error al eliminar equipo:", err);
