@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import authenticateJWT, { AuthenticatedRequest } from "../middleware/authenticateJWT.js";
 
 const router = express.Router();
@@ -17,6 +17,10 @@ router.delete(
       await prisma.file.delete({ where: { id: req.params.archivoId } });
       res.status(200).json({ message: "Archivo eliminado" });
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        res.status(404).json({ message: "Usuario no encontrado" });
+        return;
+      }
       console.error("Error al eliminar archivo:", error);
       res.status(500).json({ message: "Error al eliminar archivo" });
     }
@@ -160,6 +164,10 @@ router.put(
 
       res.status(200).json(actualizado);
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        res.status(404).json({ message: "Usuario no encontrado" });
+        return;
+      }
       console.error("Error al actualizar mantenimiento:", error);
       res.status(500).json({ message: "Error interno" });
     }
@@ -178,6 +186,10 @@ router.delete(
       await prisma.maintenance.delete({ where: { id: req.params.id } });
       res.status(204).end();
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        res.status(404).json({ message: "Usuario no encontrado" });
+        return;
+      }
       console.error("Error al eliminar mantenimiento:", error);
       res.status(500).json({ message: "Error interno" });
     }

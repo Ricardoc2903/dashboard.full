@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { AuthenticatedRequest } from "../middleware/authenticateJWT.js";
 
 const router = express.Router();
@@ -89,6 +89,10 @@ router.put("/:id", async (req: Request, res: Response): Promise<void> => {
 
     res.json(actualizado);
   } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
+      res.status(404).json({ message: "Usuario no encontrado" });
+      return;
+    }
     console.error("Error al actualizar equipo:", err);
     res.status(500).json({ message: "Error interno al actualizar equipo" });
   }
@@ -106,6 +110,10 @@ router.delete("/:id", async (req: Request, res: Response): Promise<void> => {
     await prisma.equipment.delete({ where: { id: req.params.id } });
     res.status(204).send(); // ✅ Correcto
   } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
+      res.status(404).json({ message: "Usuario no encontrado" });
+      return;
+    }
     console.error("Error al eliminar equipo:", err);
     res.status(500).json({ message: "Error interno al eliminar equipo" });
   }

@@ -1,5 +1,5 @@
 import express, { Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { AuthenticatedRequest } from "../middleware/authenticateJWT";
 
 const router = express.Router();
@@ -79,6 +79,10 @@ router.delete("/:id", async (req: AuthenticatedRequest, res: Response): Promise<
     await prisma.equipmentGroup.delete({ where: { id } });
     res.status(204).send();
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      res.status(404).json({ message: "Usuario no encontrado" });
+      return;
+    }
     console.error("Error al eliminar grupo:", error);
     res.status(500).json({ message: "Error al eliminar grupo" });
   }
