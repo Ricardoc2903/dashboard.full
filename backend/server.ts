@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import equiposRoutes from "./routes/equipos.js";
 import mantenimientosRoutes from "./routes/maintenances.js";
 import gruposRoutes from "./routes/grupos.js";
+import usersRoutes from "./routes/users.js"
 import statsRoutes from "./routes/stats.js";
 import authenticateJWT from "./middleware/authenticateJWT.js";
 // import authProtegidoRoutes from "./routes/authProtegido.js";
@@ -48,6 +49,7 @@ app.use("/api/equipos", equiposRoutes);
 app.use("/api/mantenimientos", mantenimientosRoutes);
 app.use("/api/grupos", authenticateJWT, gruposRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api/usersRoutes", usersRoutes);
 
 // Puerto
 const PORT = process.env.PORT || 3000;

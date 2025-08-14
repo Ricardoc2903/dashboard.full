@@ -1,0 +1,71 @@
+[33mca5af64[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD~3
+[33m60d0dad[m[33m ([m[1;31morigin/main[m[33m)[m HEAD@{1}: commit: añadiendo ver quien creo el equipo
+[33m3c9ae87[m HEAD@{2}: commit: añadiendo ver el usuario que creo el mantenimiento
+[33m3cbcf4c[m HEAD@{3}: commit: sadkasdl,
+[33mca5af64[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m HEAD@{4}: commit: asdad
+[33m994d5bf[m HEAD@{5}: commit: sdasd
+[33mbd22f39[m HEAD@{6}: commit: asdasdw
+[33m6acca5c[m HEAD@{7}: commit: sdasd
+[33m685ed20[m HEAD@{8}: commit: sss
+[33mac62541[m HEAD@{9}: commit: cambiando ruta image
+[33m8b49492[m HEAD@{10}: commit: image altura
+[33m42cfe7e[m HEAD@{11}: commit: image
+[33mf4be7a7[m HEAD@{12}: commit: añadiendo logo
+[33mf36ab79[m HEAD@{13}: commit: 13123
+[33me370d42[m HEAD@{14}: commit: dsadasdasd222222
+[33mc51289c[m HEAD@{15}: commit: asdasd
+[33mb10e891[m HEAD@{16}: commit: sdasdasd
+[33m77958b8[m HEAD@{17}: commit: subiendo stats
+[33m725de66[m HEAD@{18}: commit: tablas terminadas
+[33m5f056bf[m HEAD@{19}: commit: ssdadasdasd
+[33mf0d5e4b[m HEAD@{20}: commit: ddd
+[33mcd5c3ce[m HEAD@{21}: commit: tabla de manteniminetos
+[33m65d6bbb[m HEAD@{22}: commit: nueva tabla
+[33mb5d82c6[m HEAD@{23}: commit: ss
+[33m7545c5e[m HEAD@{24}: commit: nueva tabla
+[33medced56[m HEAD@{25}: commit: sdasd
+[33mbff1bc0[m HEAD@{26}: commit: cambios feid
+[33mbc9f345[m HEAD@{27}: commit: cambios en las columnas de la tbla de equipos
+[33m4e7235c[m HEAD@{28}: commit: asasd
+[33m19ff610[m HEAD@{29}: commit: cambios de tamaño
+[33m1d6e7a1[m HEAD@{30}: commit: sd
+[33mbdd111d[m HEAD@{31}: commit: router
+[33m1a15c4d[m HEAD@{32}: commit: manejo de errores
+[33mdf5d076[m HEAD@{33}: commit: SDAD
+[33mc4bad82[m HEAD@{34}: commit: sdad
+[33me8b3e06[m HEAD@{35}: commit: qweqwe
+[33m935ea9c[m HEAD@{36}: commit: a.sald,as
+[33ma731062[m HEAD@{37}: commit: X
+[33m88008a5[m HEAD@{38}: commit: confirmar eliminar dos
+[33md8711e1[m HEAD@{39}: commit: confirmar eliminar
+[33m324b79a[m HEAD@{40}: commit: cambios en estilo
+[33m569be45[m HEAD@{41}: commit: cambio feid
+[33md407e68[m HEAD@{42}: commit: cambios feid
+[33mf0ad8e8[m HEAD@{43}: commit: mas cambios
+[33m0af96ff[m HEAD@{44}: commit: cambios
+[33mbf9a67d[m HEAD@{45}: commit: cambios otra vez
+[33m2a90860[m HEAD@{46}: commit: cambios en grupos.ts
+[33m14b57c8[m HEAD@{47}: commit: mas cambios
+[33me3d882b[m HEAD@{48}: commit: cambios para ver grupos
+[33md82a1ac[m HEAD@{49}: commit: cambios en la pagina principal
+[33m6880793[m HEAD@{50}: commit: corsss
+[33mdbea64d[m HEAD@{51}: commit: cambios en cors otra vez
+[33m550e895[m HEAD@{52}: commit: cambios en cors
+[33m0b0159d[m HEAD@{53}: commit: sacando otra vez authprotegido
+[33m40c37b3[m HEAD@{54}: commit: sacando require admin
+[33m39a43d9[m HEAD@{55}: commit: mas jik
+[33m2e4953c[m HEAD@{56}: commit: JIK
+[33m34828e8[m HEAD@{57}: commit: corriendo tsc
+[33m0973faa[m HEAD@{58}: reset: moving to 0973faa
+[33m297229a[m HEAD@{59}: commit: añadiendo carpeta src
+[33m0973faa[m HEAD@{60}: commit: añadiendo dist
+[33m4eae4b9[m HEAD@{61}: commit: esquema otra vezz
+[33m82e283d[m HEAD@{62}: commit: sacando un grafico
+[33m3102472[m HEAD@{63}: commit: esquema
+[33mb6bb045[m HEAD@{64}: commit: cambios en el backend
+[33md13e926[m HEAD@{65}: commit: cambio de cors
+[33m84abfc5[m HEAD@{66}: commit: prueba de auth
+[33mbf1349e[m HEAD@{67}: commit: actualizaciones de rutas locales y borrando comentarios
+[33mdd51675[m HEAD@{68}: commit: sacando use effect
+[33m784c861[m HEAD@{69}: Branch: renamed refs/heads/main to refs/heads/main
+[33m784c861[m HEAD@{71}: commit (initial): first commit
