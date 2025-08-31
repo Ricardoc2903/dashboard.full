@@ -279,7 +279,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 const { Title, Text } = Typography;
 
 type PasswordFormValues = { currentPassword: string; newPassword: string };
