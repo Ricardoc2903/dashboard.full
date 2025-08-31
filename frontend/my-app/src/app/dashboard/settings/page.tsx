@@ -1,7 +1,7 @@
 // // src/app/dashboard/settings/page.tsx
 // "use client";
 
-// import React, { useState } from "react";
+// import React, { useState, useEffect } from "react";
 // import withAuth from "@/hoc/withAuth";
 // import {
 //   Tabs,
@@ -13,6 +13,10 @@
 //   Tooltip,
 //   Form,
 //   message,
+//   Table,
+//   Modal,
+//   Popconfirm,
+//   Select,
 // } from "antd";
 // import {
 //   SettingOutlined,
@@ -20,15 +24,24 @@
 //   GoogleOutlined,
 //   GithubOutlined,
 //   LogoutOutlined,
+//   TeamOutlined,
 // } from "@ant-design/icons";
 // import { useTheme } from "@/context/ThemeContext";
 // import { useAuth } from "@/context/AuthContext";
 // import axios from "axios";
 
-// const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+// const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 // const { Title, Text } = Typography;
 
 // type PasswordFormValues = { currentPassword: string; newPassword: string };
+
+// interface UserData {
+//   id: string;
+//   name: string;
+//   email: string;
+//   role: "ADMIN" | "USER";
+//   createdAt: string;
+// }
 
 // const UserSettings: React.FC = () => {
 //   // Theme context
@@ -51,12 +64,74 @@
 //   const { user, logout } = useAuth();
 
 //   // Local state
-//   const [isGoogleConnected, setGoogleConnected] = useState(false);
-//   const [isGitHubConnected, setGitHubConnected] = useState(false);
-//   const [loadingPassword, setLoadingPassword] = useState(false);
+//   const [isGoogleConnected, setGoogleConnected] = useState<boolean>(false);
+//   const [isGitHubConnected, setGitHubConnected] = useState<boolean>(false);
+//   const [loadingPassword, setLoadingPassword] = useState<boolean>(false);
 
-//   const toggleGoogle = () => setGoogleConnected((prev) => !prev);
-//   const toggleGitHub = () => setGitHubConnected((prev) => !prev);
+//   const toggleGoogle = () =>
+//     setGoogleConnected((prev: boolean) => !prev);
+//   const toggleGitHub = () =>
+//     setGitHubConnected((prev: boolean) => !prev);
+
+//   // Gestión de usuarios (solo admins)
+//   const [users, setUsers] = useState<UserData[]>([]);
+//   const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
+//   const [editingUser, setEditingUser] = useState<UserData | null>(null);
+//   const [editForm] = Form.useForm<UserData>();
+
+//   const fetchUsers = async () => {
+//     try {
+//       setLoadingUsers(true);
+//       const token = localStorage.getItem("token");
+//       const res = await axios.get<UserData[]>(`${API_BASE}/api/users`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       setUsers(res.data);
+//     } catch {
+//       message.error("Error al obtener usuarios");
+//     } finally {
+//       setLoadingUsers(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (user?.role === "ADMIN") {
+//       fetchUsers();
+//     }
+//   }, [user]);
+
+//   const handleEdit = (record: UserData) => {
+//     setEditingUser(record);
+//     editForm.setFieldsValue(record);
+//   };
+
+//   const handleDelete = async (id: string) => {
+//     try {
+//       const token = localStorage.getItem("token");
+//       await axios.delete(`${API_BASE}/api/users/${id}`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       message.success("Usuario eliminado");
+//       fetchUsers();
+//     } catch {
+//       message.error("Error al eliminar usuario");
+//     }
+//   };
+
+//   const submitEdit = async () => {
+//     try {
+//       const values = await editForm.validateFields();
+//       const token = localStorage.getItem("token");
+//       await axios.put(`${API_BASE}/api/users/${editingUser!.id}`, values, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       message.success("Usuario actualizado");
+//       setEditingUser(null);
+//       fetchUsers();
+//     } catch {
+//       message.error("Error al actualizar usuario");
+//     }
+//   };
 
 //   // 2) Cambiar contraseña (todos los usuarios autenticados)
 //   const handleChangePassword = async (values: PasswordFormValues) => {
@@ -79,7 +154,7 @@
 //     }
 //   };
 
-//   // Formulario de creación de admin
+//   // Pestaña Perfil / Seguridad
 //   const profileTab = (
 //     <>
 //       <Title level={4}>Seguridad</Title>
@@ -121,7 +196,7 @@
 //     </>
 //   );
 
-//   // Preferencias y conexiones externas (sin cambios)
+//   // Preferencias y conexiones externas
 //   const preferencesTab = (
 //     <>
 //       <Title level={4}>Preferencias de usuario</Title>
@@ -138,7 +213,7 @@
 
 //       <div style={{ marginBottom: 16 }}>
 //         <Text strong>Modo compacto:</Text>
-//         <Switch checked={compact} onChange={setCompact} style={{ marginLeft: 10}}/>
+//         <Switch checked={compact} onChange={setCompact} style={{ marginLeft: 10 }} />
 //       </div>
 
 //       <div style={{ marginBottom: 16 }}>
@@ -190,7 +265,7 @@
 //             icon={<GoogleOutlined />}
 //             onClick={toggleGoogle}
 //           >
-//             {isGoogleConnected ? "Desconectado" : "Conectar Google"}
+//             {isGoogleConnected ? "Desconectar Google" : "Conectar Google"}
 //           </Button>
 //         </Tooltip>
 //         <Tooltip
@@ -201,16 +276,80 @@
 //             icon={<GithubOutlined />}
 //             onClick={toggleGitHub}
 //           >
-//             {isGitHubConnected ? "Desconectado" : "Conectar GitHub"}
+//             {isGitHubConnected ? "Desconectar GitHub" : "Conectar GitHub"}
 //           </Button>
 //         </Tooltip>
 //       </div>
 //     </>
 //   );
 
+//   // Pestaña de usuarios (solo admins)
+//   const usersTab = (
+//     <>
+//       <Title level={4}>Usuarios</Title>
+//       <Table<UserData>
+//         dataSource={users}
+//         rowKey="id"
+//         loading={loadingUsers}
+//         columns={[
+//           { title: "Nombre", dataIndex: "name" },
+//           { title: "Email", dataIndex: "email" },
+//           { title: "Rol", dataIndex: "role" },
+//           {
+//             title: "Acciones",
+//             render: (_: unknown, record: UserData) => (
+//               <>
+//                 <Button type="link" onClick={() => handleEdit(record)}>
+//                   Editar
+//                 </Button>
+//                 <Popconfirm
+//                   title="¿Eliminar usuario?"
+//                   onConfirm={() => handleDelete(record.id)}
+//                 >
+//                   <Button type="link" danger>
+//                     Eliminar
+//                   </Button>
+//                 </Popconfirm>
+//               </>
+//             ),
+//           },
+//         ]}
+//       />
+
+//       <Modal
+//         open={!!editingUser}
+//         title="Editar usuario"
+//         onCancel={() => setEditingUser(null)}
+//         onOk={submitEdit}
+//       >
+//         <Form form={editForm} layout="vertical">
+//           <Form.Item
+//             label="Nombre"
+//             name="name"
+//             rules={[{ required: true, message: "Ingresa el nombre" }]}
+//           >
+//             <Input />
+//           </Form.Item>
+//           <Form.Item
+//             label="Email"
+//             name="email"
+//             rules={[{ required: true, type: "email", message: "Email inválido" }]}
+//           >
+//             <Input />
+//           </Form.Item>
+//           <Form.Item label="Rol" name="role" rules={[{ required: true }]}>
+//             <Select>
+//               <Select.Option value="ADMIN">ADMIN</Select.Option>
+//               <Select.Option value="USER">USER</Select.Option>
+//             </Select>
+//           </Form.Item>
+//         </Form>
+//       </Modal>
+//     </>
+//   );
+
 //   // Armamos el array de pestañas según el rol
 //   const items = [
-//     // Solo admins ven la pestaña de creación de otros admins
 //     ...(user?.role === "ADMIN"
 //       ? [
 //           {
@@ -221,6 +360,15 @@
 //               </span>
 //             ),
 //             children: profileTab,
+//           },
+//           {
+//             key: "users",
+//             label: (
+//               <span>
+//                 <TeamOutlined /> Usuarios
+//               </span>
+//             ),
+//             children: usersTab,
 //           },
 //         ]
 //       : []),
@@ -237,7 +385,7 @@
 
 //   return (
 //     <Tabs
-//       defaultActiveKey={user?.role === "ADMIN" ? "profile" : "security"}
+//       defaultActiveKey={user?.role === "ADMIN" ? "profile" : "preferences"}
 //       items={items}
 //       tabPosition="top"
 //       style={{ padding: 24 }}
@@ -278,8 +426,9 @@ import {
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
 const { Title, Text } = Typography;
 
 type PasswordFormValues = { currentPassword: string; newPassword: string };
@@ -293,6 +442,8 @@ interface UserData {
 }
 
 const UserSettings: React.FC = () => {
+  const router = useRouter();
+
   // Theme context
   const {
     theme,
@@ -317,10 +468,8 @@ const UserSettings: React.FC = () => {
   const [isGitHubConnected, setGitHubConnected] = useState<boolean>(false);
   const [loadingPassword, setLoadingPassword] = useState<boolean>(false);
 
-  const toggleGoogle = () =>
-    setGoogleConnected((prev: boolean) => !prev);
-  const toggleGitHub = () =>
-    setGitHubConnected((prev: boolean) => !prev);
+  const toggleGoogle = () => setGoogleConnected((prev: boolean) => !prev);
+  const toggleGitHub = () => setGitHubConnected((prev: boolean) => !prev);
 
   // Gestión de usuarios (solo admins)
   const [users, setUsers] = useState<UserData[]>([]);
@@ -330,6 +479,10 @@ const UserSettings: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
+      if (!API_BASE) {
+        message.error("Falta NEXT_PUBLIC_API_BASE_URL");
+        return;
+      }
       setLoadingUsers(true);
       const token = localStorage.getItem("token");
       const res = await axios.get<UserData[]>(`${API_BASE}/api/users`, {
@@ -349,13 +502,19 @@ const UserSettings: React.FC = () => {
     }
   }, [user]);
 
-  const handleEdit = (record: UserData) => {
+  const handleEdit = (record: UserData, e?: React.MouseEvent) => {
+    e?.stopPropagation(); // evita navegar al hacer click en “Editar”
     setEditingUser(record);
     editForm.setFieldsValue(record);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation(); // evita navegar al clickear “Eliminar”
     try {
+      if (!API_BASE) {
+        message.error("Falta NEXT_PUBLIC_API_BASE_URL");
+        return;
+      }
       const token = localStorage.getItem("token");
       await axios.delete(`${API_BASE}/api/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -369,6 +528,10 @@ const UserSettings: React.FC = () => {
 
   const submitEdit = async () => {
     try {
+      if (!API_BASE) {
+        message.error("Falta NEXT_PUBLIC_API_BASE_URL");
+        return;
+      }
       const values = await editForm.validateFields();
       const token = localStorage.getItem("token");
       await axios.put(`${API_BASE}/api/users/${editingUser!.id}`, values, {
@@ -385,15 +548,15 @@ const UserSettings: React.FC = () => {
   // 2) Cambiar contraseña (todos los usuarios autenticados)
   const handleChangePassword = async (values: PasswordFormValues) => {
     try {
+      if (!API_BASE) {
+        message.error("Falta NEXT_PUBLIC_API_BASE_URL");
+        return;
+      }
       setLoadingPassword(true);
       const token = localStorage.getItem("token");
-      await axios.put(
-        `${API_BASE}/api/authProtegido/change-password`,
-        values,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axios.put(`${API_BASE}/api/authProtegido/change-password`, values, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       message.success("Contraseña actualizada exitosamente");
     } catch (error) {
       console.error("Error al cambiar contraseña:", error);
@@ -429,11 +592,7 @@ const UserSettings: React.FC = () => {
           <Input.Password placeholder="••••••••" />
         </Form.Item>
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loadingPassword}
-          >
+          <Button type="primary" htmlType="submit" loading={loadingPassword}>
             Cambiar contraseña
           </Button>
         </Form.Item>
@@ -462,7 +621,11 @@ const UserSettings: React.FC = () => {
 
       <div style={{ marginBottom: 16 }}>
         <Text strong>Modo compacto:</Text>
-        <Switch checked={compact} onChange={setCompact} style={{ marginLeft: 10 }} />
+        <Switch
+          checked={compact}
+          onChange={setCompact}
+          style={{ marginLeft: 10 }}
+        />
       </div>
 
       <div style={{ marginBottom: 16 }}>
@@ -532,7 +695,13 @@ const UserSettings: React.FC = () => {
     </>
   );
 
+  // Navegación al detalle de usuario
+  const goToUser = (record: UserData) => {
+    router.push(`/dashboard/users/${record.id}`);
+  };
+
   // Pestaña de usuarios (solo admins)
+  // 👉 Pestaña de usuarios (solo admins)
   const usersTab = (
     <>
       <Title level={4}>Usuarios</Title>
@@ -540,22 +709,70 @@ const UserSettings: React.FC = () => {
         dataSource={users}
         rowKey="id"
         loading={loadingUsers}
+        // 👉 Hace toda la fila clickeable
+        onRow={(record) => ({
+          onClick: () => goToUser(record),
+          style: { cursor: "pointer" },
+        })}
         columns={[
-          { title: "Nombre", dataIndex: "name" },
-          { title: "Email", dataIndex: "email" },
+          {
+            title: "Nombre",
+            dataIndex: "name",
+            render: (text: string, record: UserData) => (
+              <a
+                onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                  e.stopPropagation();
+                  goToUser(record);
+                }}
+              >
+                {text}
+              </a>
+            ),
+          },
+          {
+            title: "Email",
+            dataIndex: "email",
+            render: (text: string, record: UserData) => (
+              <a
+                onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                  e.stopPropagation();
+                  goToUser(record);
+                }}
+              >
+                {text}
+              </a>
+            ),
+          },
           { title: "Rol", dataIndex: "role" },
           {
             title: "Acciones",
             render: (_: unknown, record: UserData) => (
               <>
-                <Button type="link" onClick={() => handleEdit(record)}>
+                <Button
+                  type="link"
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                    handleEdit(record, e)
+                  }
+                >
                   Editar
                 </Button>
                 <Popconfirm
                   title="¿Eliminar usuario?"
-                  onConfirm={() => handleDelete(record.id)}
+                  onConfirm={(e?: React.MouseEvent<HTMLElement>) => {
+                    e?.stopPropagation();
+                    void handleDelete(record.id); // llama y no retorna Promise
+                  }}
+                  onCancel={(e?: React.MouseEvent<HTMLElement>) => {
+                    e?.stopPropagation();
+                  }}
                 >
-                  <Button type="link" danger>
+                  <Button
+                    type="link"
+                    danger
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                      e.stopPropagation()
+                    }
+                  >
                     Eliminar
                   </Button>
                 </Popconfirm>
@@ -582,7 +799,9 @@ const UserSettings: React.FC = () => {
           <Form.Item
             label="Email"
             name="email"
-            rules={[{ required: true, type: "email", message: "Email inválido" }]}
+            rules={[
+              { required: true, type: "email", message: "Email inválido" },
+            ]}
           >
             <Input />
           </Form.Item>
