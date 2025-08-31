@@ -428,7 +428,7 @@ import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 const { Title, Text } = Typography;
 
 type PasswordFormValues = { currentPassword: string; newPassword: string };
@@ -442,8 +442,6 @@ interface UserData {
 }
 
 const UserSettings: React.FC = () => {
-  const router = useRouter();
-
   // Theme context
   const {
     theme,
@@ -462,6 +460,7 @@ const UserSettings: React.FC = () => {
 
   // Auth context: traemos usuario y logout
   const { user, logout } = useAuth();
+  const router = useRouter();
 
   // Local state
   const [isGoogleConnected, setGoogleConnected] = useState<boolean>(false);
@@ -479,10 +478,6 @@ const UserSettings: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      if (!API_BASE) {
-        message.error("Falta NEXT_PUBLIC_API_BASE_URL");
-        return;
-      }
       setLoadingUsers(true);
       const token = localStorage.getItem("token");
       const res = await axios.get<UserData[]>(`${API_BASE}/api/users`, {
@@ -502,19 +497,13 @@ const UserSettings: React.FC = () => {
     }
   }, [user]);
 
-  const handleEdit = (record: UserData, e?: React.MouseEvent) => {
-    e?.stopPropagation(); // evita navegar al hacer click en “Editar”
+  const handleEdit = (record: UserData) => {
     setEditingUser(record);
     editForm.setFieldsValue(record);
   };
 
-  const handleDelete = async (id: string, e?: React.MouseEvent) => {
-    e?.stopPropagation(); // evita navegar al clickear “Eliminar”
+  const handleDelete = async (id: string) => {
     try {
-      if (!API_BASE) {
-        message.error("Falta NEXT_PUBLIC_API_BASE_URL");
-        return;
-      }
       const token = localStorage.getItem("token");
       await axios.delete(`${API_BASE}/api/users/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -528,10 +517,6 @@ const UserSettings: React.FC = () => {
 
   const submitEdit = async () => {
     try {
-      if (!API_BASE) {
-        message.error("Falta NEXT_PUBLIC_API_BASE_URL");
-        return;
-      }
       const values = await editForm.validateFields();
       const token = localStorage.getItem("token");
       await axios.put(`${API_BASE}/api/users/${editingUser!.id}`, values, {
@@ -545,18 +530,18 @@ const UserSettings: React.FC = () => {
     }
   };
 
-  // 2) Cambiar contraseña (todos los usuarios autenticados)
+  // Cambiar contraseña
   const handleChangePassword = async (values: PasswordFormValues) => {
     try {
-      if (!API_BASE) {
-        message.error("Falta NEXT_PUBLIC_API_BASE_URL");
-        return;
-      }
       setLoadingPassword(true);
       const token = localStorage.getItem("token");
-      await axios.put(`${API_BASE}/api/authProtegido/change-password`, values, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.put(
+        `${API_BASE}/api/authProtegido/change-password`,
+        values,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       message.success("Contraseña actualizada exitosamente");
     } catch (error) {
       console.error("Error al cambiar contraseña:", error);
@@ -592,7 +577,11 @@ const UserSettings: React.FC = () => {
           <Input.Password placeholder="••••••••" />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loadingPassword}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loadingPassword}
+          >
             Cambiar contraseña
           </Button>
         </Form.Item>
@@ -604,7 +593,7 @@ const UserSettings: React.FC = () => {
     </>
   );
 
-  // Preferencias y conexiones externas
+  // Preferencias
   const preferencesTab = (
     <>
       <Title level={4}>Preferencias de usuario</Title>
@@ -621,11 +610,7 @@ const UserSettings: React.FC = () => {
 
       <div style={{ marginBottom: 16 }}>
         <Text strong>Modo compacto:</Text>
-        <Switch
-          checked={compact}
-          onChange={setCompact}
-          style={{ marginLeft: 10 }}
-        />
+        <Switch checked={compact} onChange={setCompact} style={{ marginLeft: 10 }} />
       </div>
 
       <div style={{ marginBottom: 16 }}>
@@ -695,13 +680,7 @@ const UserSettings: React.FC = () => {
     </>
   );
 
-  // Navegación al detalle de usuario
-  const goToUser = (record: UserData) => {
-    router.push(`/dashboard/users/${record.id}`);
-  };
-
-  // Pestaña de usuarios (solo admins)
-  // 👉 Pestaña de usuarios (solo admins)
+  // Usuarios
   const usersTab = (
     <>
       <Title level={4}>Usuarios</Title>
@@ -709,70 +688,26 @@ const UserSettings: React.FC = () => {
         dataSource={users}
         rowKey="id"
         loading={loadingUsers}
-        // 👉 Hace toda la fila clickeable
         onRow={(record) => ({
-          onClick: () => goToUser(record),
-          style: { cursor: "pointer" },
+          onClick: () => router.push(`/dashboard/settings/${record.id}`),
+          style: { cursor: "pointer" }, // 🔥 para que se note clickable
         })}
         columns={[
-          {
-            title: "Nombre",
-            dataIndex: "name",
-            render: (text: string, record: UserData) => (
-              <a
-                onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.stopPropagation();
-                  goToUser(record);
-                }}
-              >
-                {text}
-              </a>
-            ),
-          },
-          {
-            title: "Email",
-            dataIndex: "email",
-            render: (text: string, record: UserData) => (
-              <a
-                onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.stopPropagation();
-                  goToUser(record);
-                }}
-              >
-                {text}
-              </a>
-            ),
-          },
+          { title: "Nombre", dataIndex: "name" },
+          { title: "Email", dataIndex: "email" },
           { title: "Rol", dataIndex: "role" },
           {
             title: "Acciones",
             render: (_: unknown, record: UserData) => (
               <>
-                <Button
-                  type="link"
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                    handleEdit(record, e)
-                  }
-                >
+                <Button type="link" onClick={() => handleEdit(record)}>
                   Editar
                 </Button>
                 <Popconfirm
                   title="¿Eliminar usuario?"
-                  onConfirm={(e?: React.MouseEvent<HTMLElement>) => {
-                    e?.stopPropagation();
-                    void handleDelete(record.id); // llama y no retorna Promise
-                  }}
-                  onCancel={(e?: React.MouseEvent<HTMLElement>) => {
-                    e?.stopPropagation();
-                  }}
+                  onConfirm={() => handleDelete(record.id)}
                 >
-                  <Button
-                    type="link"
-                    danger
-                    onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                      e.stopPropagation()
-                    }
-                  >
+                  <Button type="link" danger>
                     Eliminar
                   </Button>
                 </Popconfirm>
@@ -799,9 +734,7 @@ const UserSettings: React.FC = () => {
           <Form.Item
             label="Email"
             name="email"
-            rules={[
-              { required: true, type: "email", message: "Email inválido" },
-            ]}
+            rules={[{ required: true, type: "email", message: "Email inválido" }]}
           >
             <Input />
           </Form.Item>
@@ -816,7 +749,7 @@ const UserSettings: React.FC = () => {
     </>
   );
 
-  // Armamos el array de pestañas según el rol
+  // Items de Tabs
   const items = [
     ...(user?.role === "ADMIN"
       ? [
