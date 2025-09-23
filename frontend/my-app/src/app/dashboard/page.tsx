@@ -456,8 +456,6 @@ import {
   CartesianGrid,
   Tooltip as RTooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
 } from "recharts";
 import { ToolOutlined, ApartmentOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -580,14 +578,6 @@ function ChartsPage() {
     return trend.filter((t) => dayjs(t.day).isAfter(startDate));
   }, [timeRange, trend]);
 
-  // Tomar últimos 5 mantenimientos (ya lo trae la API, pero aseguramos)
-  const ultimos5 = useMemo(() => {
-    return [...latestMaint]
-      .sort((a, b) => dayjs(b.date).valueOf() - dayjs(a.date).valueOf())
-      .slice(0, 5)
-      .reverse();
-  }, [latestMaint]);
-
   return (
     <div style={{ padding: 24 }}>
       <div style={{ marginBottom: 8 }}>
@@ -625,31 +615,6 @@ function ChartsPage() {
 
       {/* Charts */}
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-        {/* Gráfico de últimos 5 mantenimientos */}
-        <Col xs={24} lg={12}>
-          <Card
-            title="Últimos 5 mantenimientos"
-            loading={loading}
-            bodyStyle={{ paddingBottom: 0 }}
-          >
-            <div style={{ width: "100%", height: 320 }}>
-              <ResponsiveContainer>
-                <BarChart
-                  data={ultimos5.map((m) => ({
-                    nombre: m.name,
-                    cantidad: 1,
-                  }))}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke={GRID} />
-                  <XAxis dataKey="nombre" tick={{ fill: TEXT }} />
-                  <YAxis allowDecimals={false} tick={{ fill: TEXT }} />
-                  <RTooltip />
-                  <Bar dataKey="cantidad" fill={PRIMARY} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </Card>
-        </Col>
 
         {/* Gráfico de mantenimientos en el tiempo */}
         <Col xs={24} lg={12}>
