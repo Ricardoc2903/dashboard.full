@@ -180,12 +180,11 @@ function ChartsPage() {
       </Row>
 
       {/* Charts */}
-      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+      <Row gutter={[32, 32]} style={{ marginTop: 16 }}>
 
         {/* Gráfico de mantenimientos en el tiempo */}
         <Col xs={24} lg={12}>
           <Card
-          className=" w-full"
             title="Mantenimientos en el tiempo"
             extra={
               <Select
@@ -227,9 +226,9 @@ function ChartsPage() {
       </Row>
 
       {/* Tabla últimos 5 mantenimientos */}
-      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+      <Row gutter={[32, 32]} style={{ marginTop: 16 }}>
         <Col xs={24} lg={12}>
-          <Card className=" w-full" title="Últimos 5 mantenimientos" loading={loading}>
+          <Card title="Últimos 5 mantenimientos" loading={loading}>
             <Table<Maintenance>
               dataSource={latestMaint}
               rowKey="id"
